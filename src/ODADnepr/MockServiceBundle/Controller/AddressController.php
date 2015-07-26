@@ -74,7 +74,6 @@ class AddressController extends FOSRestController
         'Request' => 'Houses',
         'HousesForStreetId' => $street_id,
       ]);
-      var_dump(htmlspecialchars($string));
       $xml_items = new \SimpleXMLElement($string);
       $entities = array();
       foreach ($xml_items->Houses->House as $xml_item) {

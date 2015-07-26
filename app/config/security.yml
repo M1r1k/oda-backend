@@ -28,7 +28,7 @@ security:
                 failure_handler:          lexik_jwt_authentication.handler.authentication_failure
                 require_previous_session: false
         free_api:
-            pattern: ^/rest/v1/address
+            pattern: ^/rest/v1/(address|generate)
             stateless: true
             anonymous: true
 
@@ -39,6 +39,6 @@ security:
 
     access_control:
         - { path: ^/rest/v1/user-auth, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/rest/v1/generate/user, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/rest/v1/generate, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/rest/v1/address, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/rest,       roles: IS_AUTHENTICATED_FULLY }
