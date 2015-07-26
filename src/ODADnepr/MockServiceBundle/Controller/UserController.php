@@ -7,6 +7,7 @@ use ODADnepr\MockServiceBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class UserController extends FOSRestController
 {
@@ -99,13 +100,12 @@ class UserController extends FOSRestController
         return $user;
     }
 
-    protected function saveUserWithRelations(\stdClass $userObject, $update = false)
-    {
+    protected function saveUserWithRelations(\stdClass $userObject, $update = false) {
         $odaEntityManager = $this->get('oda.oda_entity_manager');
         $address = $odaEntityManager->setAddress($userObject->address);
         if ($update && ($user = $this->userRepository->find($userObject))) {
-
-        } else {
+        }
+        else {
             $user = new User();
         }
         $user->setAddress($address);
@@ -116,9 +116,15 @@ class UserController extends FOSRestController
         $user->setImage($userObject->image);
         $user->setPhone($userObject->phone);
         $user->setPassword($userObject->password);
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
-
-        return $user;
+        $validator = $this->get('validator');
+        $errors = $validator->validate($user);
+        if (empty($errors)) {
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+            return $user;
+        }
+        $serializer = $this->get('serializer');
+        var_dump($serializer->toArray($errors));
+        throw new BadRequestHttpException(json_encode($serializer->toArray($errors)));
     }
 }
