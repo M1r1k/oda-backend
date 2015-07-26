@@ -38,7 +38,7 @@ class AuthenticationSuccessEventListener
   public function onAuthenticationSuccess(AuthenticationSuccessEvent $event) {
     $data = $event->getData();
     $user = $event->getUser();
-    $data['user'] = $user->getEmail();
+    $data['user'] = json_decode($this->serializer->serialize($user, 'json'), true);
     $event->setData($data);
   }
 
