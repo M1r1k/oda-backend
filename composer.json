@@ -19,10 +19,12 @@
         "sensio/framework-extra-bundle": "2.3.*",
         "sensio/generator-bundle": "2.3.*",
         "incenteev/composer-parameter-handler": "~2.0",
-        "friendsofsymfony/rest-bundle": "~1.1",
+        "friendsofsymfony/rest-bundle": "@dev",
         "jms/serializer-bundle": "@dev",
         "willdurand/rest-extra-bundle": "@dev",
-        "nelmio/api-doc-bundle": "@dev"
+        "nelmio/api-doc-bundle": "@dev",
+        "lexik/jwt-authentication-bundle": "^1.1",
+        "symfony/serializer": "^2.7"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "dev-master",

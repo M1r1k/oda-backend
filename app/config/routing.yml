@@ -1,8 +1,11 @@
-acme_blogs:
-    type: rest
-    prefix: /api
-    resource: "@AcmeBlogBundle/Resources/config/routes.yml"
+oda_dnepr_mock_service:
+    resource: "@ODADneprMockServiceBundle/Controller/"
+    type:     annotation
+    prefix:   /
 
 NelmioApiDocBundle:
     resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
     prefix:   /api/doc
+
+api_login_check:
+   path: /rest/user-auth-check
