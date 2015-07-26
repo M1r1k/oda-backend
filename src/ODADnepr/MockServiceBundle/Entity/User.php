@@ -12,7 +12,7 @@ use Symfony\Component\Security\Core\User\UserInterface as SecurityUserInterface;
  * User
  *
  * @ORM\Table()
- * @ORM\Entity(repositoryClass="ODADnepr\MockServiceBundle\Entity\UserRepository")
+ * @ORM\Entity()
  */
 class User implements SecurityUserInterface
 {

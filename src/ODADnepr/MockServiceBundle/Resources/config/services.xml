@@ -8,7 +8,9 @@
     </parameters>
 
     <services>
-
+        <service id="oda.oda_entity_manager" class="ODADnepr\MockServiceBundle\Entity\OdaEntityManager" public="true">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+        </service>
         <service id="oda.user_provider.email" class="ODADnepr\MockServiceBundle\Security\UserProvider" public="false">
             <argument type="service" id="doctrine.orm.entity_manager" />
         </service>
