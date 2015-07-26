@@ -19,11 +19,12 @@ class AddressController extends FOSRestController
     /**
      * @Route("/rest/v1/address/districts")
      * @Method({"GET"})
+     * @Template()
      */
     public function getDistrictsAction()
     {
-      $string = $this->soapAddressGetter(['Request' => 'Districts']);
-      $districts = new \SimpleXMLElement($string);
+      $string = utf8_decode(utf8_encode($this->soapAddressGetter(['Request' => 'Districts'])));
+      $districts = new \SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?>' . $string);
       $districts_map = array();
       foreach ($districts->District as $district) {
         $vars = get_object_vars($district);

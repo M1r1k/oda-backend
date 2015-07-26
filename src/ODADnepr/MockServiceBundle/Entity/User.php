@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\OneToOne;
 use Symfony\Component\Security\Core\Role\Role;
 use Symfony\Component\Security\Core\User\UserInterface as SecurityUserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * User
@@ -28,27 +29,30 @@ class User implements SecurityUserInterface
     /**
      * @var string
      *
+     * @Assert\NotBlank()
      * @ORM\Column(name="first_name", type="string", length=255)
      */
     private $first_name;
 
     /**
      * @var string
-     *
+     * @Assert\NotBlank()
      * @ORM\Column(name="last_name", type="string", length=255)
      */
     private $last_name;
 
     /**
      * @var string
-     *
+     * @Assert\NotBlank()
+     * @Assert\Email()
+     * @Assert\Length(min=3)
      * @ORM\Column(name="email", type="string", length=255)
      */
     private $email;
 
     /**
      * @var integer
-     *
+     * @Assert\NotBlank
      * @ORM\Column(name="birthday", type="integer")
      */
     private $birthday;

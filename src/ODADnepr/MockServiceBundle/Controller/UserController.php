@@ -12,6 +12,7 @@ use ODADnepr\MockServiceBundle\Entity\Address;
 use ODADnepr\MockServiceBundle\Entity\Street;
 use ODADnepr\MockServiceBundle\Entity\House;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class UserController extends FOSRestController
 {
@@ -111,10 +112,16 @@ class UserController extends FOSRestController
     $user->setImage($userObject->image);
     $user->setPhone($userObject->phone);
     $user->setPassword($userObject->password);
-    $this->entityManager->persist($user);
-    $this->entityManager->flush();
-
-    return $user;
+    $validator = $this->get('validator');
+    $errors = $validator->validate($user);
+    if (empty($errors)) {
+      $this->entityManager->persist($user);
+      $this->entityManager->flush();
+      return $user;
+    }
+    $serializer = $this->get('serializer');
+var_dump($serializer->toArray($errors));
+    throw new BadRequestHttpException(json_encode($serializer->toArray($errors)));
   }
 
   protected function setAddress(\stdClass $address) {
