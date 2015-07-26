@@ -64,7 +64,7 @@ class TicketController extends FOSRestController
     }
 
     /**
-     * @Route("/rest/v1/user/{id}")
+     * @Route("/rest/v1/ticket/{id}")
      * @Method({"DELETE"})
      */
     public function deleteAction($id)
@@ -76,7 +76,7 @@ class TicketController extends FOSRestController
     }
 
     /**
-     * @Route("/rest/v1/user")
+     * @Route("/rest/v1/ticket")
      * @Method({"POST"})
      */
     public function postAction(Request $request)
@@ -88,22 +88,22 @@ class TicketController extends FOSRestController
     }
 
     /**
-     * @Route("/rest/v1/user")
+     * @Route("/rest/v1/ticket")
      * @Method({"PUT"})
      */
     public function putAction(Request $request)
     {
-        $user_object = json_decode($request->getContent());
-        $user = $this->saveTicketWithRelations($user_object, true);
+        $ticket_object = json_decode($request->getContent());
+        $ticket = $this->saveTicketWithRelations($ticket_object, true);
 
-        return $user;
+        return $ticket;
     }
 
     protected function saveTicketWithRelations(\stdClass $ticketObject, $update = false)
     {
         $odaEntityManager = $this->get('oda.oda_entity_manager');
         $address = $odaEntityManager->setAddress($ticketObject->address);
-        $user = $odaEntityManager->setUser($ticketObject->user);
+        $user = $odaEntityManager->getUser($ticketObject->user);
         if ($update && ($ticket = $this->ticketRepository->find($ticketObject))) {
 
         } else {
@@ -115,11 +115,15 @@ class TicketController extends FOSRestController
         $ticket->setManager($ticketObject->manager);
         $ticket->setTitle($ticketObject->title);
         $ticket->setText($ticketObject->text);
-        $ticket->setCompletionDate($ticketObject->completedDate);
+        if (!empty($ticketObject->completedDate)) {
+            $ticket->setCompletionDate($ticketObject->completedDate);
+        }
         $ticket->setState($ticketObject->state);
         $ticket->setTicketnumber($ticketObject->ticketnumber);
         $ticket->setImage($ticketObject->image);
-        $ticket->setComment($ticketObject->comment);
+        if (!empty($ticketObject->comment)) {
+            $ticket->setComment($ticketObject->comment);
+        }
         $this->entityManager->persist($ticket);
         $this->entityManager->flush();
 

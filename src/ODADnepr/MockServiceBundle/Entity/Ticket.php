@@ -5,6 +5,7 @@ namespace ODADnepr\MockServiceBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\OneToOne;
+use Doctrine\ORM\Mapping\ManyToOne;
 
 /**
  * Ticket
@@ -26,7 +27,7 @@ class Ticket
     /**
      * @var User
      *
-     * @OneToOne(targetEntity="User")
+     * @ManyToOne(targetEntity="User")
      * @JoinColumn(name="user_id", referencedColumnName="id")
      */
     private $user;
@@ -34,7 +35,7 @@ class Ticket
     /**
      * @var Address
      *
-     * @OneToOne(targetEntity="Address")
+     * @ManyToOne(targetEntity="Address")
      * @JoinColumn(name="address_id", referencedColumnName="id")
      */
     private $address;
@@ -70,7 +71,7 @@ class Ticket
     /**
      * @var integer
      *
-     * @ORM\Column(name="completion_date", type="integer")
+     * @ORM\Column(name="completion_date", type="integer", nullable=true)
      */
     private $completion_date;
 
@@ -98,7 +99,7 @@ class Ticket
     /**
      * @var string
      *
-     * @ORM\Column(name="comment", type="text")
+     * @ORM\Column(name="comment", type="text", nullable=true)
      */
     private $comment;
 
@@ -116,10 +117,10 @@ class Ticket
     /**
      * Set user
      *
-     * @param \stdClass $user
+     * @param User $user
      * @return Ticket
      */
-    public function setUser(\stdClass $user)
+    public function setUser(User $user)
     {
         $this->user = $user;
     
@@ -129,7 +130,7 @@ class Ticket
     /**
      * Get user
      *
-     * @return \stdClass
+     * @return User
      */
     public function getUser()
     {
@@ -139,10 +140,10 @@ class Ticket
     /**
      * Set address
      *
-     * @param \stdClass $address
+     * @param Address $address
      * @return Ticket
      */
-    public function setAddress(\stdClass $address)
+    public function setAddress(Address $address)
     {
         $this->address = $address;
     
@@ -152,7 +153,7 @@ class Ticket
     /**
      * Get address
      *
-     * @return \stdClass
+     * @return Address
      */
     public function getAddress()
     {

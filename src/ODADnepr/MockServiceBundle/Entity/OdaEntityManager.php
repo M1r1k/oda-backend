@@ -3,6 +3,7 @@
 namespace ODADnepr\MockServiceBundle\Entity;
 
 use Doctrine\Common\Persistence\ObjectManager;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 
 /**
@@ -106,10 +107,10 @@ class OdaEntityManager
     {
         $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:User');
 
-        if (!($user = $repo->find($user_object->id))) {
-
+        if ($user = $repo->find($user_object->id)) {
+            return $user;
         }
 
-        return $user;
+        throw new BadRequestHttpException("User not found.");
     }
 }
