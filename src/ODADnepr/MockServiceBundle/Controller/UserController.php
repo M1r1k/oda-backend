@@ -118,13 +118,12 @@ class UserController extends FOSRestController
         $user->setPassword($userObject->password);
         $validator = $this->get('validator');
         $errors = $validator->validate($user);
-        if (empty($errors)) {
+        if ($errors->count() == 0) {
             $this->entityManager->persist($user);
             $this->entityManager->flush();
             return $user;
         }
         $serializer = $this->get('serializer');
-        var_dump($serializer->toArray($errors));
         throw new BadRequestHttpException(json_encode($serializer->toArray($errors)));
     }
 }
