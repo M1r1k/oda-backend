@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * User
  *
  * @ORM\Table()
- * @ORM\Entity(repositoryClass="ODADnepr\MockServiceBundle\Entity\UserRepository")
+ * @ORM\Entity()
  */
 class User implements SecurityUserInterface
 {

@@ -8,10 +8,17 @@
     </parameters>
 
     <services>
+        <service id="oda.oda_entity_manager" class="ODADnepr\MockServiceBundle\Entity\OdaEntityManager" public="true">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+        </service>
         <service id="oda.user_provider.email" class="ODADnepr\MockServiceBundle\Security\UserProvider" public="false">
             <argument type="service" id="doctrine.orm.entity_manager" />
         </service>
         <service id="kernel.listener.success_authentication_listener" class="ODADnepr\MockServiceBundle\EventListener\AuthenticationSuccessEventListener" public="true">
+            <argument type="service" id="serializer" />
+            <tag name="kernel.event_listener" event="lexik_jwt_authentication.on_authentication_success" method="onAuthenticationSuccess" />
+        </service>
+        <service id="kernel.listener.authentication_listener" class="ODADnepr\MockServiceBundle\EventListener\AuthenticationSuccessEventListener" public="true">
             <argument type="service" id="serializer" />
             <tag name="kernel.event_listener" event="lexik_jwt_authentication.on_authentication_success" method="onAuthenticationSuccess" />
         </service>
