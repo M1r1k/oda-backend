@@ -4,7 +4,10 @@ namespace ODADnepr\MockServiceBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\JoinColumn;
-use Doctrine\ORM\Mapping\OneToOne;
+use Doctrine\ORM\Mapping\JoinTable;
+use Doctrine\ORM\Mapping\ManyToMany;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\Role\Role;
 use Symfony\Component\Security\Core\User\UserInterface as SecurityUserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -14,6 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @ORM\Table()
  * @ORM\Entity()
+ * @UniqueEntity("email")
  */
 class User implements SecurityUserInterface
 {
@@ -46,7 +50,7 @@ class User implements SecurityUserInterface
      * @Assert\NotBlank()
      * @Assert\Email()
      * @Assert\Length(min=3)
-     * @ORM\Column(name="email", type="string", length=255)
+     * @ORM\Column(name="email", type="string", length=255, unique=true)
      */
     private $email;
 
@@ -60,21 +64,21 @@ class User implements SecurityUserInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="image", type="string")
+     * @ORM\Column(name="image", type="string", nullable=true)
      */
     private $image;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="phone", type="string", length=255)
+     * @ORM\Column(name="phone", type="string", length=255, nullable=true)
      */
     private $phone;
 
     /**
      * @var Address
      *
-     * @OneToOne(targetEntity="Address")
+     * @ManyToOne(targetEntity="Address")
      * @JoinColumn(name="address_id", referencedColumnName="id")
      */
     private $address;
@@ -273,10 +277,10 @@ class User implements SecurityUserInterface
     /**
      * Set address
      *
-     * @param \stdClass $address
+     * @param Address $address
      * @return User
      */
-    public function setAddress($address)
+    public function setAddress(Address $address)
     {
         $this->address = $address;
     

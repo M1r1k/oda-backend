@@ -4,6 +4,8 @@ namespace ODADnepr\MockServiceBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\JoinTable;
+use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\ManyToOne;
 
@@ -57,9 +59,9 @@ class Ticket
     /**
      * @var string
      *
-     * @ORM\Column(name="text", type="text")
+     * @ORM\Column(name="body", type="text")
      */
-    private $text;
+    private $body;
 
     /**
      * @var integer
@@ -71,9 +73,9 @@ class Ticket
     /**
      * @var integer
      *
-     * @ORM\Column(name="completion_date", type="integer", nullable=true)
+     * @ORM\Column(name="completed_date", type="integer", nullable=true)
      */
-    private $completion_date;
+    private $completed_date;
 
     /**
      * @var integer
@@ -85,14 +87,14 @@ class Ticket
     /**
      * @var string
      *
-     * @ORM\Column(name="ticketnumber", type="string", length=255)
+     * @ORM\Column(name="ticket_id", type="string", length=255)
      */
-    private $ticketnumber;
+    private $ticket_id;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="image", type="string")
+     * @ORM\Column(name="image", type="string", nullable=true)
      */
     private $image;
 
@@ -209,12 +211,12 @@ class Ticket
     /**
      * Set text
      *
-     * @param string $text
+     * @param string $body
      * @return Ticket
      */
-    public function setText($text)
+    public function setBody($body)
     {
-        $this->text = $text;
+        $this->body = $body;
     
         return $this;
     }
@@ -224,9 +226,9 @@ class Ticket
      *
      * @return string 
      */
-    public function getText()
+    public function getBody()
     {
-        return $this->text;
+        return $this->body;
     }
 
     /**
@@ -258,9 +260,9 @@ class Ticket
      * @param integer $completionDate
      * @return Ticket
      */
-    public function setCompletionDate($completionDate)
+    public function setCompletedDate($completionDate)
     {
-        $this->completion_date = $completionDate;
+        $this->completed_date = $completionDate;
     
         return $this;
     }
@@ -270,9 +272,9 @@ class Ticket
      *
      * @return integer
      */
-    public function getCompletionDate()
+    public function getCompletedDate()
     {
-        return $this->completion_date;
+        return $this->completed_date;
     }
 
     /**
@@ -301,12 +303,12 @@ class Ticket
     /**
      * Set ticketnumber
      *
-     * @param string $ticketnumber
+     * @param string $ticket_id
      * @return Ticket
      */
-    public function setTicketnumber($ticketnumber)
+    public function setTicketid($ticket_id)
     {
-        $this->ticketnumber = $ticketnumber;
+        $this->ticket_id = $ticket_id;
     
         return $this;
     }
@@ -316,9 +318,9 @@ class Ticket
      *
      * @return string 
      */
-    public function getTicketnumber()
+    public function getTicketid()
     {
-        return $this->ticketnumber;
+        return $this->ticket_id;
     }
 
     /**

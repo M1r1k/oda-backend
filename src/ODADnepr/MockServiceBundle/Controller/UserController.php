@@ -77,7 +77,7 @@ class UserController extends FOSRestController
     }
 
     /**
-     * @Route("/rest/v1/user")
+     * @Route("/rest/v1/user-register")
      * @Method({"POST"})
      */
     public function postAction(Request $request)
@@ -101,9 +101,10 @@ class UserController extends FOSRestController
     }
 
     protected function saveUserWithRelations(\stdClass $userObject, $update = false) {
+        $this->manualConstruct();
         $odaEntityManager = $this->get('oda.oda_entity_manager');
         $address = $odaEntityManager->setAddress($userObject->address);
-        if ($update && ($user = $this->userRepository->find($userObject))) {
+        if ($update && ($user = $this->userRepository->find($userObject->id))) {
         }
         else {
             $user = new User();

@@ -27,6 +27,12 @@ security:
                 success_handler:          lexik_jwt_authentication.handler.authentication_success
                 failure_handler:          lexik_jwt_authentication.handler.authentication_failure
                 require_previous_session: false
+
+        registration:
+            pattern: ^/rest/v1/user-register
+            anonymous: true
+            stateless: true
+
         free_api:
             pattern: ^/rest/v1/(address|generate|ticket\-categories)
             stateless: true
@@ -39,4 +45,5 @@ security:
 
     access_control:
         - { path: ^/rest/v1/(address|generate|ticket\-categories), roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/rest/v1/user-register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/rest,       roles: IS_AUTHENTICATED_FULLY }
