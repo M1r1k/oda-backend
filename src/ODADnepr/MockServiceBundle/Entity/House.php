@@ -5,6 +5,7 @@ namespace ODADnepr\MockServiceBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
+use JMS\Serializer\Annotation\Exclude;
 
 /**
  * House
@@ -31,6 +32,7 @@ class House
     private $name;
 
     /**
+     * @Exclude
      * @ManyToOne(targetEntity="Street", inversedBy="houses")
      * @JoinColumn(name="street_id", referencedColumnName="id")
      */

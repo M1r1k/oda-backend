@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
+use JMS\Serializer\Annotation\Exclude;
 
 /**
  * City
@@ -33,6 +34,7 @@ class City
     private $name;
 
     /**
+     * @Exclude
      * @ManyToOne(targetEntity="District", inversedBy="cities")
      * @JoinColumn(name="district_id", referencedColumnName="id")
      */

@@ -5,6 +5,7 @@ namespace ODADnepr\MockServiceBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\OneToMany;
+use JMS\Serializer\Annotation\Exclude;
 
 /**
  * District
@@ -33,6 +34,7 @@ class District
     /**
      * @var string
      *
+     * @Exclude
      * @OneToMany(targetEntity="City", mappedBy="district")
      */
     private $cities;
