@@ -34,7 +34,7 @@ security:
             stateless: true
 
         free_api:
-            pattern: ^/rest/v1/(address|generate|ticket\-categories)
+            pattern: ^/rest/v1/(address|generate|ticket\-categories|tickets)
             stateless: true
             anonymous: true
 
@@ -44,6 +44,6 @@ security:
             lexik_jwt: ~
 
     access_control:
-        - { path: ^/rest/v1/(address|generate|ticket\-categories), roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/rest/v1/(address|generate|ticket\-categories|tickets), roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/rest/v1/user-register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/rest,       roles: IS_AUTHENTICATED_FULLY }

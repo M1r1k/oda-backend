@@ -84,8 +84,8 @@ class UserController extends FOSRestController
     {
         $user_object = json_decode($request->getContent());
         $user = $this->saveUserWithRelations($user_object);
-
-        return $user;
+        $jwtProvider = $this->get('lexik_jwt_authentication.jwt_manager');
+        return ['user' => $user, 'token' => $jwtProvider->create($user)];
     }
 
     /**
