@@ -3,9 +3,11 @@
 namespace ODADnepr\MockServiceBundle\Controller;
 
 use FOS\RestBundle\Controller\FOSRestController;
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use ODADnepr\MockServiceBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -28,6 +30,11 @@ class UserController extends FOSRestController
         $this->userRepository = $this->entityManager->getRepository('ODADneprMockServiceBundle:User');
     }
 
+    public function manualResponseHandler($data) {
+      $view = $this->view($data);
+      return $this->handleView($view);
+    }
+
     /**
      * @Route("/rest/v1/generate/user")
      * @Method({"POST"})
@@ -42,6 +49,15 @@ class UserController extends FOSRestController
     }
 
     /**
+     * @ApiDoc(
+     *   resource=true,
+     *   description="AUTHORIZATION REQUIRED!!! Endpoint for user authorization through JWT",
+     *   statusCodes={
+     *     200="Returned when authorization was successful",
+     *     403="Returned when the user is not authorized"
+     *   }
+     * )
+     *
      * @Route("/rest/v1/users")
      * @Method({"GET"})
      */
@@ -50,7 +66,7 @@ class UserController extends FOSRestController
         $this->manualConstruct();
 
         $users = $this->userRepository->findAll();
-        return $users;
+        return $this->manualResponseHandler($users);
     }
 
     /**
@@ -61,7 +77,8 @@ class UserController extends FOSRestController
     {
         $this->manualConstruct();
 
-        return $this->userRepository->find($id);
+        $user = $this->userRepository->find($id);
+        return $this->manualResponseHandler($user);
     }
 
     /**
@@ -85,7 +102,8 @@ class UserController extends FOSRestController
         $user_object = json_decode($request->getContent());
         $user = $this->saveUserWithRelations($user_object);
         $jwtProvider = $this->get('lexik_jwt_authentication.jwt_manager');
-        return ['user' => $user, 'token' => $jwtProvider->create($user)];
+        $data = ['user' => $user, 'token' => $jwtProvider->create($user)];
+        return $this->manualResponseHandler($data);
     }
 
     /**
@@ -97,7 +115,7 @@ class UserController extends FOSRestController
         $user_object = json_decode($request->getContent());
         $user = $this->saveUserWithRelations($user_object, true);
 
-        return $user;
+      return $this->manualResponseHandler($user);
     }
 
     protected function saveUserWithRelations(\stdClass $userObject, $update = false) {
