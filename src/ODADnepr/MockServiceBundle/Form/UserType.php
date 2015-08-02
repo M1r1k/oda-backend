@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class UserType extends AbstractType
 {
-        /**
+    /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
@@ -20,7 +20,8 @@ class UserType extends AbstractType
             ->add('email')
             ->add('birthday')
             ->add('image')
-            ->add('mobile')
+            ->add('phone')
+            ->add('password')
             ->add('address')
         ;
     }

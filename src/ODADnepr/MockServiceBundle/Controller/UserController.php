@@ -51,7 +51,8 @@ class UserController extends FOSRestController
     /**
      * @ApiDoc(
      *   resource=true,
-     *   description="AUTHORIZATION REQUIRED!!! Endpoint for user authorization through JWT",
+     *   description="AUTHORIZATION REQUIRED!!! Returns list of users",
+     *   output="ODADnepr\MockServiceBundle\Entity\User",
      *   statusCodes={
      *     200="Returned when authorization was successful",
      *     403="Returned when the user is not authorized"
@@ -70,31 +71,75 @@ class UserController extends FOSRestController
     }
 
     /**
-     * @Route("/rest/v1/user/{id}")
+     * @ApiDoc(
+     *   resource=true,
+     *   description="AUTHORIZATION REQUIRED!!! Returns user with requested ID",
+     *   requirements={
+     *     {
+     *       "name"="user_id",
+     *       "dataType"="integer",
+     *       "required"=true,
+     *       "description"="User ID"
+     *     }
+     *   },
+     *   output="ODADnepr\MockServiceBundle\Entity\User",
+     *   statusCodes={
+     *     200="Returned when authorization was successful",
+     *     403="Returned when the user is not authorized"
+     *   }
+     * )
+     *
+     * @Route("/rest/v1/user/{user_id}")
      * @Method({"GET"})
      */
-    public function getAction($id)
+    public function getAction($user_id)
     {
         $this->manualConstruct();
 
-        $user = $this->userRepository->find($id);
+        $user = $this->userRepository->find($user_id);
         return $this->manualResponseHandler($user);
     }
 
     /**
-     * @Route("/rest/v1/user/{id}")
+     * @ApiDoc(
+     *   resource=true,
+     *   description="AUTHORIZATION REQUIRED!!! Deletes user by given ID",
+     *   requirements={
+     *     {
+     *       "name"="user_id",
+     *       "dataType"="integer",
+     *       "required"=true,
+     *       "description"="User ID"
+     *     }
+     *   },
+     *   statusCodes={
+     *     200="Returned when authorization was successful",
+     *     403="Returned when the user is not authorized"
+     *   }
+     * )
+     * @Route("/rest/v1/user/{user_id}")
      * @Method({"DELETE"})
      */
-    public function deleteAction($id)
+    public function deleteAction($user_id)
     {
         $this->manualConstruct();
-        $user = $this->userRepository->find($id);
+        $user = $this->userRepository->find($user_id);
         $this->entityManager->remove($user);
         return ['status message' => 'woohoo!'];
     }
 
     /**
-     * @Route("/rest/v1/user-register")
+     * @ApiDoc(
+     *   resource=true,
+     *   description="AUTHORIZATION REQUIRED!!! Creates new user.",
+     *   input="ODADnepr\MockServiceBundle\Form\UserType",
+     *   output="ODADnepr\MockServiceBundle\Entity\User",
+     *   statusCodes={
+     *     200="Returned when authorization was successful",
+     *     403="Returned when the user is not authorized"
+     *   }
+     * )
+     * @Route("/rest/v1/user")
      * @Method({"POST"})
      */
     public function postAction(Request $request)
@@ -107,10 +152,29 @@ class UserController extends FOSRestController
     }
 
     /**
-     * @Route("/rest/v1/user")
+     * @ApiDoc(
+     *   resource=true,
+     *   description="AUTHORIZATION REQUIRED!!! Updates user by given ID.",
+     *   requirements={
+     *     {
+     *       "name"="user_id",
+     *       "dataType"="integer",
+     *       "required"=true,
+     *       "description"="User ID"
+     *     }
+     *   },
+     *   input="ODADnepr\MockServiceBundle\Form\UserType",
+     *   output="ODADnepr\MockServiceBundle\Entity\User",
+     *   statusCodes={
+     *     200="Returned when authorization was successful",
+     *     403="Returned when the user is not authorized",
+     *     404="Given user was not found"
+     *   }
+     * )
+     * @Route("/rest/v1/user/{user_id}")
      * @Method({"PUT"})
      */
-    public function putAction(Request $request)
+    public function putAction(Request $request, $user_id)
     {
         $user_object = json_decode($request->getContent());
         $user = $this->saveUserWithRelations($user_object, true);

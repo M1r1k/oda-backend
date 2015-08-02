@@ -31,7 +31,11 @@ class User implements SecurityUserInterface
     private $id;
 
     /**
+     * Top description.
+     *
      * @var string
+     *
+     * bottom description
      *
      * @Assert\NotBlank()
      * @ORM\Column(name="first_name", type="string", length=255)
