@@ -113,14 +113,14 @@ class TicketController extends FOSRestController
         }
         $ticket->setUser($user);
         $ticket->setAddress($address);
-        $ticket->setManager($ticketObject->manager);
-        $ticket->setTitle($ticketObject->title);
+        $ticket->setManager(!empty($ticketObject->manager) ? $ticketObject->manager : '');
+        $ticket->setTitle(!empty($ticketObject->title) ? $ticketObject->title : '');
         $ticket->setBody($ticketObject->body);
         if (!empty($ticketObject->completed_date)) {
             $ticket->setCompletedDate($ticketObject->completed_date);
         }
         $ticket->setState($ticketObject->state);
-        $ticket->setTicketid($ticketObject->ticket_id);
+        $ticket->setTicketid(!empty($ticketObject->ticket_id) ? $ticketObject->ticket_id : '');
         if (!empty($ticketObject->image)) {
           $ticket->setImage($ticketObject->image);
         }

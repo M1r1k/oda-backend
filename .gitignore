@@ -1,12 +1,12 @@
-/web/bundles/
+.idea
 /app/bootstrap.php.cache
 /app/cache/*
+!app/cache/.gitkeep
 /app/config/parameters.yml
 /app/logs/*
-!app/cache/.gitkeep
 !app/logs/.gitkeep
-/build/
-/vendor/
+/app/phpunit.xml
 /bin/
 /composer.phar
-/composer.lock
+/vendor/
+/web/bundles/

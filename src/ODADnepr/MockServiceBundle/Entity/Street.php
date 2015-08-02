@@ -42,7 +42,7 @@ class Street
 
     /**
      * @var string
-     *
+     * @Exclude
      * @OneToMany(targetEntity="House", mappedBy="street")
      */
     private $houses;

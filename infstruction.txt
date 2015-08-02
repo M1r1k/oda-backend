@@ -1,0 +1,15 @@
+After fixing these issues, re-check Symfony requirements executing this command:
+
+   php oda-setup/app/check.php
+
+ Then, you can:
+
+    * Change your current directory to /Users/m1r1k/projects/oda/oda-setup
+
+    * Configure your application in app/config/parameters.yml file.
+
+    * Run your application:
+        1. Execute the php app/console server:run command.
+        2. Browse to the http://localhost:8000 URL.
+
+    * Read the documentation at http://symfony.com/doc

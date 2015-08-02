@@ -1,0 +1,45 @@
+{
+  "first_name": "Федя",
+  "password": "new-password",
+  "last_name": "Поплавок",
+  "email": "ex@gmail.com",
+  "birthday": 1437816988,
+  "image": "",
+  "phone": "+380952338401",
+  "address": {
+    "id": 1,
+    "district": {
+      "id": 1,
+      "name": "Dnipropetrovska"
+    },
+    "city": {
+      "id": 1,
+      "name": "Dnipropetrovsk",
+      "district": {
+        "id": 1,
+        "name": "Dnipropetrovska"
+      }
+    },
+    "street": {
+      "id": 1,
+      "name": "Karla Marksa",
+      "city": {
+        "id": 1,
+        "name": "Dnipropetrovsk",
+        "district": {
+          "id": 1,
+          "name": "Dnipropetrovska"
+        }
+      }
+    },
+    "house": {
+      "id": 1,
+      "name": "5",
+      "street": {
+        "id": 1,
+        "name": "Karla Marksa"
+      }
+    },
+    "flat": "123B"
+  }
+}

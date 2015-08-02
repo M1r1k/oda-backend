@@ -2,20 +2,24 @@
 
 namespace ODADnepr\MockServiceBundle\Security\Http\Firewall;
 
+use Symfony\Component\Form\Extension\Csrf\CsrfProvider\CsrfProviderAdapter;
 use Symfony\Component\Form\Extension\Csrf\CsrfProvider\CsrfProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Security\Csrf\CsrfToken;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationSuccessHandlerInterface;
 use Symfony\Component\Security\Http\Firewall\UsernamePasswordFormAuthenticationListener;
 use Symfony\Component\Security\Http\Session\SessionAuthenticationStrategyInterface;
 use Symfony\Component\Security\Http\HttpUtils;
 use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\Exception\InvalidArgumentException;
 use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
-use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 /**
  * UsernamePasswordFormAuthenticationListener is the default implementation of
  * an authentication via a simple form composed of a username and a password.
@@ -24,14 +28,17 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class UsernamePasswordJsonAuthenticationListener extends UsernamePasswordFormAuthenticationListener
 {
-  private $csrfProvider;
+  private $csrfTokenManager;
 
-  /**
-   * {@inheritdoc}
-   */
-  public function __construct(SecurityContextInterface $securityContext, AuthenticationManagerInterface $authenticationManager, SessionAuthenticationStrategyInterface $sessionStrategy, HttpUtils $httpUtils, $providerKey, AuthenticationSuccessHandlerInterface $successHandler, AuthenticationFailureHandlerInterface $failureHandler, array $options = array(), LoggerInterface $logger = null, EventDispatcherInterface $dispatcher = null, CsrfProviderInterface $csrfProvider = null)
+  public function __construct(TokenStorageInterface $tokenStorage, AuthenticationManagerInterface $authenticationManager, SessionAuthenticationStrategyInterface $sessionStrategy, HttpUtils $httpUtils, $providerKey, AuthenticationSuccessHandlerInterface $successHandler, AuthenticationFailureHandlerInterface $failureHandler, array $options = array(), LoggerInterface $logger = null, EventDispatcherInterface $dispatcher = null, $csrfTokenManager = null)
   {
-    parent::__construct($securityContext, $authenticationManager, $sessionStrategy, $httpUtils, $providerKey, $successHandler, $failureHandler, array_merge(array(
+    if ($csrfTokenManager instanceof CsrfProviderInterface) {
+      $csrfTokenManager = new CsrfProviderAdapter($csrfTokenManager);
+    } elseif (null !== $csrfTokenManager && !$csrfTokenManager instanceof CsrfTokenManagerInterface) {
+      throw new InvalidArgumentException('The CSRF token manager should be an instance of CsrfProviderInterface or CsrfTokenManagerInterface.');
+    }
+
+    parent::__construct($tokenStorage, $authenticationManager, $sessionStrategy, $httpUtils, $providerKey, $successHandler, $failureHandler, array_merge(array(
       'username_parameter' => '_username',
       'password_parameter' => '_password',
       'csrf_parameter' => '_csrf_token',
@@ -39,7 +46,7 @@ class UsernamePasswordJsonAuthenticationListener extends UsernamePasswordFormAut
       'post_only' => true,
     ), $options), $logger, $dispatcher);
 
-    $this->csrfProvider = $csrfProvider;
+    $this->csrfTokenManager = $csrfTokenManager;
   }
 
   /**
@@ -47,19 +54,25 @@ class UsernamePasswordJsonAuthenticationListener extends UsernamePasswordFormAut
    */
   protected function attemptAuthentication(Request $request)
   {
-    if (null !== $this->csrfProvider) {
+    if (null !== $this->csrfTokenManager) {
       $csrfToken = $request->get($this->options['csrf_parameter'], null, true);
 
-      if (false === $this->csrfProvider->isCsrfTokenValid($this->options['intention'], $csrfToken)) {
+      if (false === $this->csrfTokenManager->isTokenValid(new CsrfToken($this->options['intention'], $csrfToken))) {
         throw new InvalidCsrfTokenException('Invalid CSRF token.');
       }
     }
-    $json_content = json_decode($request->getContent());
 
-    $username = trim($json_content->{$this->options['username_parameter']});
-    $password = $json_content->{$this->options['password_parameter']};
+    if ($this->options['post_only']) {
+      $json_content = json_decode($request->getContent());
 
-    $request->getSession()->set(SecurityContextInterface::LAST_USERNAME, $username);
+      $username = !empty($json_content->{$this->options['username_parameter']}) ? trim($json_content->{$this->options['username_parameter']}) : '';
+      $password = !empty($json_content->{$this->options['password_parameter']}) ? $json_content->{$this->options['password_parameter']} : '';
+    } else {
+      $username = trim($request->get($this->options['username_parameter'], null, true));
+      $password = $request->get($this->options['password_parameter'], null, true);
+    }
+
+    $request->getSession()->set(Security::LAST_USERNAME, $username);
 
     return $this->authenticationManager->authenticate(new UsernamePasswordToken($username, $password, $this->providerKey));
   }
