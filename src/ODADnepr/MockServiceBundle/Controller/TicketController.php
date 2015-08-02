@@ -105,6 +105,8 @@ class TicketController extends FOSRestController
         $odaEntityManager = $this->get('oda.oda_entity_manager');
         $address = $odaEntityManager->setAddress($ticketObject->address);
         $user = $odaEntityManager->getUser($ticketObject->user);
+        $manager = $odaEntityManager->getManager($ticketObject->manager);
+        $category = $odaEntityManager->getCategory($ticketObject->category);
         if ($update && ($ticket = $this->ticketRepository->find($ticketObject->id))) {
 
         } else {
@@ -113,7 +115,8 @@ class TicketController extends FOSRestController
         }
         $ticket->setUser($user);
         $ticket->setAddress($address);
-        $ticket->setManager(!empty($ticketObject->manager) ? $ticketObject->manager : '');
+        $ticket->setManager($manager);
+        $ticket->setCategory($category);
         $ticket->setTitle(!empty($ticketObject->title) ? $ticketObject->title : '');
         $ticket->setBody($ticketObject->body);
         if (!empty($ticketObject->completed_date)) {
