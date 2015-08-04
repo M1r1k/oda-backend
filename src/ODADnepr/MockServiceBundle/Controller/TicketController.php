@@ -2,10 +2,13 @@
 
 namespace ODADnepr\MockServiceBundle\Controller;
 
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use FOS\RestBundle\Controller\FOSRestController;
 use ODADnepr\MockServiceBundle\Entity\Ticket;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+
 use Symfony\Component\HttpFoundation\Request;
 
 class TicketController extends FOSRestController
@@ -27,6 +30,11 @@ class TicketController extends FOSRestController
         $this->ticketRepository = $this->entityManager->getRepository('ODADneprMockServiceBundle:Ticket');
     }
 
+    protected function manualResponseHandler($data) {
+        $view = $this->view($data);
+        return $this->handleView($view);
+    }
+
     /**
      * @Route("/rest/v1/generate/ticket")
      * @Method({"POST"})
@@ -43,13 +51,23 @@ class TicketController extends FOSRestController
     /**
      * @Route("/rest/v1/tickets")
      * @Method({"GET"})
+     * @Template
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         $this->manualConstruct();
 
+        $parameters = $request->query->all();
+        $where = '';
+
+        if (!empty($parameters['category'])) {
+
+        }
+
+        $this->entityManager->createQuery('SELECT t FROM ODADneprMockServiceBundle:Ticket t ' . $where . ' t.');
+
         $tickets = $this->ticketRepository->findAll();
-        return $tickets;
+        return $this->manualResponseHandler($tickets);
     }
 
     /**
