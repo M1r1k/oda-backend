@@ -36,7 +36,7 @@ class UserController extends FOSRestController
     }
 
     /**
-     * @Route("/rest/v1/generate/user")
+     * @Route("/rest/v1/user-register")
      * @Method({"POST"})
      */
     public function generateDevContentAction(Request $request)
