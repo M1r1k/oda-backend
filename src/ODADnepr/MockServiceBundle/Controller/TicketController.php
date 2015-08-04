@@ -56,8 +56,8 @@ class TicketController extends FOSRestController
      *   filters={
      *     {"name"="state", "dataType"="string"},
      *     {"name"="title", "dataType"="string"},
-     *     {"name"="category", "dataType"="string"},
-     *   }
+     *     {"name"="category", "dataType"="string"}
+     *   },
      *   statusCodes={
      *     200="Returned when authorization was successful",
      *     403="Returned when the user is not authorized"
