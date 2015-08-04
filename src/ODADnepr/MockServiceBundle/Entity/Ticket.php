@@ -30,7 +30,7 @@ class Ticket
      * @var User
      *
      * @ManyToOne(targetEntity="User")
-     * @JoinColumn(name="user_id", referencedColumnName="id")
+     * @JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
      */
     private $user;
 
@@ -43,11 +43,20 @@ class Ticket
     private $address;
 
     /**
-     * @var integer
+     * @var Manager
      *
-     * @ORM\Column(name="manager", type="integer")
+     * @ManyToOne(targetEntity="Manager")
+     * @JoinColumn(name="manager_id", referencedColumnName="id")
      */
     private $manager;
+
+    /**
+     * @var TicketCategory
+     *
+     * @ManyToOne(targetEntity="TicketCategory")
+     * @JoinColumn(name="category_id", referencedColumnName="id", nullable=false)
+     */
+    private $category;
 
     /**
      * @var string
@@ -165,7 +174,7 @@ class Ticket
     /**
      * Set manager
      *
-     * @param integer $manager
+     * @param Manager $manager
      * @return Ticket
      */
     public function setManager($manager)
@@ -178,11 +187,34 @@ class Ticket
     /**
      * Get manager
      *
-     * @return integer
+     * @return Manager
      */
     public function getManager()
     {
         return $this->manager;
+    }
+
+    /**
+     * Set category
+     *
+     * @param TicketCategory $category
+     * @return Ticket
+     */
+    public function setCategory($category)
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
+    /**
+     * Get category
+     *
+     * @return TicketCategory
+     */
+    public function getCategory()
+    {
+        return $this->category;
     }
 
     /**

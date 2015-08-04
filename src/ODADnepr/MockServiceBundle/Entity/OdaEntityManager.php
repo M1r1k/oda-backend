@@ -113,4 +113,36 @@ class OdaEntityManager
 
         throw new BadRequestHttpException("User not found.");
     }
+
+    public function getManager($manager_object)
+    {
+        if (is_null($manager_object)) {
+            return null;
+        }
+
+        $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:Manager');
+
+        if (!isset($manager_object->id) || !($manager = $repo->find($manager_object->id))) {
+            $manager = new Manager();
+            $manager->setName($manager_object->name);
+            $this->entityManager->persist($manager);
+            $this->entityManager->flush();
+        }
+
+        return $manager;
+    }
+
+    public function getCategory($category_object)
+    {
+        $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:TicketCategory');
+
+        if (!isset($category_object->id) || !($category = $repo->find($category_object->id))) {
+            $category = new TicketCategory();
+            $category->setName($category_object->name);
+            $this->entityManager->persist($category);
+            $this->entityManager->flush();
+        }
+
+        return $category;
+    }
 }
