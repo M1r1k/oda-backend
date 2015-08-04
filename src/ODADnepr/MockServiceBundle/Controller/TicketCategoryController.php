@@ -3,6 +3,7 @@
 namespace ODADnepr\MockServiceBundle\Controller;
 
 use FOS\RestBundle\Controller\FOSRestController;
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,6 +28,16 @@ class TicketCategoryController extends FOSRestController
     }
 
     /**
+     * @ApiDoc(
+     *   resource=true,
+     *   description="AUTHORIZATION REQUIRED!!! Returns list of ticket categories",
+     *   output="ODADnepr\MockServiceBundle\Entity\TicketCategory",
+     *   statusCodes={
+     *     200="Returned when authorization was successful",
+     *     403="Returned when the user is not authorized"
+     *   }
+     * )
+     *
      * @Route("/rest/v1/ticket-categories")
      * @Method({"GET"})
      */
@@ -39,13 +50,31 @@ class TicketCategoryController extends FOSRestController
     }
 
     /**
-     * @Route("/rest/v1/ticket-category/{id}")
+     * @ApiDoc(
+     *   resource=true,
+     *   description="AUTHORIZATION REQUIRED!!! Returns Ticket Category with requested ID",
+     *   requirements={
+     *     {
+     *       "name"="category_id",
+     *       "dataType"="integer",
+     *       "required"=true,
+     *       "description"="Manager ID"
+     *     }
+     *   },
+     *   output="ODADnepr\MockServiceBundle\Entity\TicketCategory",
+     *   statusCodes={
+     *     200="Returned when authorization was successful",
+     *     403="Returned when the user is not authorized"
+     *   }
+     * )
+     *
+     * @Route("/rest/v1/ticket-category/{category_id}")
      * @Method({"GET"})
      */
-    public function getAction($id)
+    public function getAction($category_id)
     {
         $this->manualConstruct();
 
-        return $this->ticketCategoryRepository->find($id);
+        return $this->ticketCategoryRepository->find($category_id);
     }
 }

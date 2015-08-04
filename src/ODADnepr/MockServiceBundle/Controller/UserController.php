@@ -36,6 +36,16 @@ class UserController extends FOSRestController
     }
 
     /**
+     * @ApiDoc(
+     *   resource=true,
+     *   description="AUTHORIZATION REQUIRED!!! Creates new user.",
+     *   input="ODADnepr\MockServiceBundle\Form\UserType",
+     *   output="ODADnepr\MockServiceBundle\Entity\User",
+     *   statusCodes={
+     *     200="Returned when authorization was successful",
+     *     400="Returned when there is errors"
+     *   }
+     * )
      * @Route("/rest/v1/user-register")
      * @Method({"POST"})
      */
