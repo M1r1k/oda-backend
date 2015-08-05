@@ -98,7 +98,7 @@ class Ticket
      * @var TicketState
      *
      * @ManyToOne(targetEntity="TicketCategory")
-     * @ORM\Column(name="state_id", referencedColumnName="id", nullable=false)
+     * @JoinColumn(name="state_id", referencedColumnName="id", nullable=false)
      */
     private $state;
 
