@@ -67,7 +67,8 @@ class User implements SecurityUserInterface
      * @Assert\NotBlank
      * @ORM\Column(name="birthday", type="integer")
      */
-    private $birthday;
+  // @todo remove
+    private $birthday = 1438793276;
 
     /**
      * @var string

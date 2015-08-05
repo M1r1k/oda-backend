@@ -101,6 +101,11 @@ fos_rest:
         default_format: json
     view:
         view_response_listener: true
+    format_listener:
+        rules:
+            # setting fallback_format to json means that instead of considering the next rule in case of a priority mismatch, json will be used
+            - { path: '^/', priorities: ['json', 'xml'], fallback_format: json, prefer_extension: false }
+
 
 sensio_framework_extra:
     view:
