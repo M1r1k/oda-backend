@@ -22,19 +22,11 @@ class TicketState
     private $id;
 
     /**
-     * @var string(nullable=false
-     *
-     * @ORM\Column(name="name", type="string(nullable=false")
-     */
-    private $name;
-
-    /**
      * @var string
      *
-     * @ORM\Column(name="unique=false)", type="string")
+     * @ORM\Column(name="name", type="string", nullable=false)
      */
-    private $unique=false);
-
+    private $name;
 
     /**
      * Get id
@@ -49,10 +41,10 @@ class TicketState
     /**
      * Set name
      *
-     * @param \string(nullable=false $name
+     * @param string $name
      * @return TicketState
      */
-    public function setName(\string(nullable=false $name)
+    public function setName($name)
     {
         $this->name = $name;
 
@@ -62,33 +54,11 @@ class TicketState
     /**
      * Get name
      *
-     * @return \string(nullable=false 
+     * @return string
      */
     public function getName()
     {
         return $this->name;
     }
 
-    /**
-     * Set unique=false)
-     *
-     * @param string $unique=false)
-     * @return TicketState
-     */
-    public function setUnique=false)($unique=false))
-    {
-        $this->unique=false) = $unique=false);
-
-        return $this;
-    }
-
-    /**
-     * Get unique=false)
-     *
-     * @return string 
-     */
-    public function getUnique=false)()
-    {
-        return $this->unique=false);
-    }
 }
