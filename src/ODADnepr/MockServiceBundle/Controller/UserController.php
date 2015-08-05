@@ -49,7 +49,7 @@ class UserController extends FOSRestController
      * @Route("/rest/v1/user-register")
      * @Method({"POST"})
      */
-    public function generateDevContentAction(Request $request)
+    public function createUserAction(Request $request)
     {
         $this->manualConstruct();
         $user_object = json_decode($request->getContent());
@@ -136,29 +136,6 @@ class UserController extends FOSRestController
         $user = $this->userRepository->find($user_id);
         $this->entityManager->remove($user);
         return ['status message' => 'woohoo!'];
-    }
-
-    /**
-     * @ApiDoc(
-     *   resource=true,
-     *   description="AUTHORIZATION REQUIRED!!! Creates new user.",
-     *   input="ODADnepr\MockServiceBundle\Form\UserType",
-     *   output="ODADnepr\MockServiceBundle\Entity\User",
-     *   statusCodes={
-     *     200="Returned when authorization was successful",
-     *     403="Returned when the user is not authorized"
-     *   }
-     * )
-     * @Route("/rest/v1/user")
-     * @Method({"POST"})
-     */
-    public function postAction(Request $request)
-    {
-        $user_object = json_decode($request->getContent());
-        $user = $this->saveUserWithRelations($user_object);
-        $jwtProvider = $this->get('lexik_jwt_authentication.jwt_manager');
-        $data = ['user' => $user, 'token' => $jwtProvider->create($user)];
-        return $this->manualResponseHandler($data);
     }
 
     /**
