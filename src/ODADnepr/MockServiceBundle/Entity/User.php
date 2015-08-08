@@ -108,7 +108,7 @@ class User implements SecurityUserInterface
     /**
      * @var Address
      *
-     * @ManyToOne(targetEntity="Address")
+     * @ManyToOne(targetEntity="Address", cascade={"persist"})
      * @JoinColumn(name="address_id", referencedColumnName="id")
      */
     private $address;

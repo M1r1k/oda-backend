@@ -4,6 +4,7 @@ namespace ODADnepr\MockServiceBundle\Controller;
 
 use FOS\RestBundle\Controller\FOSRestController;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use ODADnepr\MockServiceBundle\Entity\Address;
 use ODADnepr\MockServiceBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -24,9 +25,15 @@ class UserController extends FOSRestController
      */
     protected $entityManager;
 
+    /**
+     * @var \JMS\Serializer\SerializerInterface
+     */
+    protected $serializer;
+
     public function manualConstruct()
     {
         $this->entityManager = $this->getDoctrine()->getManager();
+        $this->serializer = $this->get('serializer');
         $this->userRepository = $this->entityManager->getRepository('ODADneprMockServiceBundle:User');
     }
 
@@ -52,7 +59,7 @@ class UserController extends FOSRestController
     public function createUserAction(Request $request)
     {
         $this->manualConstruct();
-        $user_object = json_decode($request->getContent());
+        $user_object = $this->serializer->deserialize($request->getContent(), 'ODADnepr\MockServiceBundle\Entity\User', 'json');
         $user = $this->saveUserWithRelations($user_object);
 
         return $user;
@@ -169,31 +176,23 @@ class UserController extends FOSRestController
       return $this->manualResponseHandler($user);
     }
 
-    protected function saveUserWithRelations(\stdClass $userObject, $update = false) {
+    protected function saveUserWithRelations(User $user, $update = false) {
         $this->manualConstruct();
-        $odaEntityManager = $this->get('oda.oda_entity_manager');
-        $address = $odaEntityManager->setAddress($userObject->address);
-        if ($update && ($user = $this->userRepository->find($userObject->id))) {
+        if ($update) {
+            $user = $this->userRepository->find($user->getId());
         }
-        else {
-            $user = new User();
+        if (($address = $user->getAddress()) && $address instanceof Address) {
+
+            $this->entityManager->merge($address);
+            $user->setAddress($address);
         }
-        $user->setAddress($address);
-        $user->setBirthday($userObject->birthday);
-        $user->setEmail($userObject->email);
-        $user->setFirstName($userObject->first_name);
-        $user->setLastName($userObject->last_name);
-        $user->setImage($userObject->image);
-        $user->setPhone($userObject->phone);
-        $user->setPassword($userObject->password);
         $validator = $this->get('validator');
         $errors = $validator->validate($user);
         if ($errors->count() == 0) {
-            $this->entityManager->persist($user);
+            $this->entityManager->merge($user);
             $this->entityManager->flush();
             return $user;
         }
-        $serializer = $this->get('serializer');
-        throw new BadRequestHttpException(json_encode($serializer->toArray($errors)));
+        throw new BadRequestHttpException(json_encode($this->serializer->toArray($errors)));
     }
 }
