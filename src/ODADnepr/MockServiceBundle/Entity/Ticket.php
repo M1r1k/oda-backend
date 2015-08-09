@@ -28,7 +28,7 @@ class Ticket
 
     /**
      * @var User
-     *
+     * @Assert\NotBlank()
      * @ManyToOne(targetEntity="User")
      * @JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
      */
@@ -36,7 +36,7 @@ class Ticket
 
     /**
      * @var Address
-     *
+     * @Assert\NotBlank()
      * @ManyToOne(targetEntity="Address")
      * @JoinColumn(name="address_id", referencedColumnName="id")
      */
@@ -46,13 +46,13 @@ class Ticket
      * @var Manager
      *
      * @ManyToOne(targetEntity="Manager")
-     * @JoinColumn(name="manager_id", referencedColumnName="id")
+     * @JoinColumn(name="manager_id", referencedColumnName="id", nullable=true)
      */
     private $manager;
 
     /**
      * @var TicketCategory
-     *
+     * @Assert\NotBlank()
      * @ManyToOne(targetEntity="TicketCategory")
      * @JoinColumn(name="category_id", referencedColumnName="id", nullable=false)
      */
@@ -60,7 +60,7 @@ class Ticket
 
     /**
      * @var TicketType
-     *
+     * @Assert\NotBlank()
      * @ManyToOne(targetEntity="TicketType")
      * @JoinColumn(name="type_id", referencedColumnName="id", nullable=false)
      */
@@ -68,28 +68,26 @@ class Ticket
 
     /**
      * @var string
-     *
+     * @Assert\NotBlank()
      * @ORM\Column(name="title", type="string", length=255)
      */
     private $title;
 
     /**
      * @var string
-     *
+     * @Assert\NotBlank()
      * @ORM\Column(name="body", type="text")
      */
     private $body;
 
     /**
      * @var integer
-     *
      * @ORM\Column(name="created_date", type="integer")
      */
     private $created_date;
 
     /**
      * @var integer
-     *
      * @ORM\Column(name="completed_date", type="integer", nullable=true)
      */
     private $completed_date;
@@ -105,7 +103,7 @@ class Ticket
     /**
      * @var string
      *
-     * @ORM\Column(name="ticket_id", type="string", length=255)
+     * @ORM\Column(name="ticket_id", type="string", length=255, nullable=false)
      */
     private $ticket_id;
 
@@ -122,7 +120,6 @@ class Ticket
      * @ORM\Column(name="comment", type="text", nullable=true)
      */
     private $comment;
-
 
     /**
      * Get id
@@ -370,7 +367,7 @@ class Ticket
      * @param string $ticket_id
      * @return Ticket
      */
-    public function setTicketid($ticket_id)
+    public function setTicketId($ticket_id)
     {
         $this->ticket_id = $ticket_id;
     
@@ -382,7 +379,7 @@ class Ticket
      *
      * @return string 
      */
-    public function getTicketid()
+    public function getTicketId()
     {
         return $this->ticket_id;
     }

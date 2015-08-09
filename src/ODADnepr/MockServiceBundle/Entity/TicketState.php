@@ -12,6 +12,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class TicketState
 {
+    const NEW_TICKET = 1;
+
     /**
      * @var integer
      *

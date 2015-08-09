@@ -2,16 +2,13 @@
 
 namespace ODADnepr\MockServiceBundle\Controller;
 
-use FOS\RestBundle\Controller\FOSRestController;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
-use ODADnepr\MockServiceBundle\Entity\Address;
-use ODADnepr\MockServiceBundle\Entity\OdaEntityManager;
 use ODADnepr\MockServiceBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UserController extends BaseController
 {
@@ -21,16 +18,11 @@ class UserController extends BaseController
      */
     protected $userRepository;
 
-    /**
-     * @var OdaEntityManager
-     */
-    protected $odaManager;
 
     public function manualConstruct()
     {
         parent::manualConstruct();
         $this->userRepository = $this->entityManager->getRepository('ODADneprMockServiceBundle:User');
-        $this->odaManager = $this->get('oda.oda_entity_manager');
     }
 
     /**
@@ -54,7 +46,7 @@ class UserController extends BaseController
         $user_object = $this->serializer->deserialize($request->getContent(), 'ODADnepr\MockServiceBundle\Entity\User', 'json');
         $user = $this->saveUserWithRelations($user_object);
 
-        return $user;
+        return $this->manualResponseHandler($user);
     }
 
     /**
@@ -134,7 +126,7 @@ class UserController extends BaseController
         $this->manualConstruct();
         $user = $this->userRepository->find($user_id);
         $this->entityManager->remove($user);
-        return ['status message' => 'woohoo!'];
+        return $this->manualResponseHandler(['status message' => 'woohoo!']);
     }
 
     /**
@@ -163,31 +155,44 @@ class UserController extends BaseController
     public function putAction(Request $request, $user_id)
     {
         $user_object = json_decode($request->getContent());
-        $user = $this->saveUserWithRelations($user_object, true);
+        $user = $this->saveUserWithRelations($user_object, $user_id);
 
       return $this->manualResponseHandler($user);
     }
 
-    protected function saveUserWithRelations(User $user, $update = false) {
+    protected function saveUserWithRelations(User $userObject, $user_id = null) {
         $this->manualConstruct();
-        if ($update) {
-            $user = $this->userRepository->find($user->getId());
+        if ($user_id) {
+            $user = $this->userRepository->find($user_id);
+            if (!$user) {
+                throw new NotFoundHttpException('User was not found');
+            }
         }
-        $user->setAddress($this->odaManager->setAddress($user->getAddress()));
-        $user->setFacilities($this->odaManager->setFacilities($user->getFacilities()));
-        $user->setSocialCondition($this->odaManager->setSocialCondition($user->getSocialCondition()));
+        else {
+            $user = new User();
+        }
+        $user->setFirstName($userObject->getFirstName());
+        $user->setLastName($userObject->getLastName());
+        $user->setBirthday($userObject->getBirthday());
+        $user->setEmail($userObject->getEmail());
+        $user->setGender($user->getGender());
+        $user->setImage($user->getImage());
+        $user->setPhone($user->getPhone());
+        $user->setAddress($this->odaManager->setAddress($userObject->getAddress()));
+        $user->setFacilities($this->odaManager->setFacilities($userObject->getFacilities()));
+        $user->setSocialCondition($this->odaManager->setSocialCondition($userObject->getSocialCondition()));
         $validator = $this->get('validator');
         $errors = $validator->validate($user);
-        if ($errors->count() == 0) {
-            if ($update) {
-                $this->entityManager->merge($user);
-            }
-            else {
-                $this->entityManager->persist($user);
-            }
-            $this->entityManager->flush();
-            return $user;
+        if ($errors->count() > 0) {
+            throw new BadRequestHttpException(json_encode($this->serializer->toArray($errors)));
         }
-        throw new BadRequestHttpException(json_encode($this->serializer->toArray($errors)));
+        if ($user_id) {
+            $this->entityManager->merge($user);
+        }
+        else {
+            $this->entityManager->persist($user);
+        }
+        $this->entityManager->flush();
+        return $user;
     }
 }

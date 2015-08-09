@@ -115,15 +115,16 @@ class OdaEntityManager
         return $socialCondition;
     }
 
-    public function getUser(\stdClass $user_object)
+    public function getUser(User $user_object)
     {
         $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:User');
 
-        if ($user = $repo->find($user_object->id)) {
-            return $user;
+        $user = $repo->find($user_object->getId());
+        if (!$user) {
+            throw new NotFoundHttpException('Ticket category with ID=' . $user->getId() . ' was not found');
         }
 
-        throw new BadRequestHttpException("User not found.");
+        return $user;
     }
 
     public function getManager($manager_object)
@@ -144,17 +145,27 @@ class OdaEntityManager
         return $manager;
     }
 
-    public function getCategory($category_object)
+    public function getCategory(TicketCategory $category_object)
     {
         $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:TicketCategory');
 
-        if (!isset($category_object->id) || !($category = $repo->find($category_object->id))) {
-            $category = new TicketCategory();
-            $category->setName($category_object->name);
-            $this->entityManager->persist($category);
-            $this->entityManager->flush();
+        $category = $repo->find($category_object->getId());
+        if (!$category) {
+            throw new NotFoundHttpException('Ticket category with ID=' . $category->getId() . ' was not found');
         }
 
         return $category;
+    }
+
+    public function getType(TicketType $type)
+    {
+        $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:TicketType');
+
+        $type = $repo->find($type->getId());
+        if (!$type) {
+            throw new NotFoundHttpException('Ticket type with ID=' . $type->getId() . ' was not found');
+        }
+
+        return $type;
     }
 }

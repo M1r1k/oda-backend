@@ -4,13 +4,15 @@ namespace ODADnepr\MockServiceBundle\Controller;
 
 use Doctrine\ORM\Query;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
-use FOS\RestBundle\Controller\FOSRestController;
 use ODADnepr\MockServiceBundle\Entity\Ticket;
+use ODADnepr\MockServiceBundle\Entity\TicketState;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class TicketController extends BaseController
 {
@@ -24,19 +26,6 @@ class TicketController extends BaseController
     {
         parent::manualConstruct();
         $this->ticketRepository = $this->entityManager->getRepository('ODADneprMockServiceBundle:Ticket');
-    }
-
-    /**
-     * @Route("/rest/v1/generate/ticket")
-     * @Method({"POST"})
-     */
-    public function generateDevContentAction(Request $request)
-    {
-        $this->manualConstruct();
-        $ticket_object = json_decode($request->getContent());
-        $ticket = $this->saveTicketWithRelations($ticket_object);
-
-        return $ticket;
     }
 
     /**
@@ -122,7 +111,7 @@ class TicketController extends BaseController
     {
         $this->manualConstruct();
 
-        return $this->ticketRepository->find($id);
+        return $this->manualResponseHandler($this->ticketRepository->find($id));
     }
 
     /**
@@ -134,7 +123,7 @@ class TicketController extends BaseController
         $this->manualConstruct();
         $ticket = $this->ticketRepository->find($id);
         $this->entityManager->remove($ticket);
-        return ['status message' => 'woohoo!'];
+        return $this->manualResponseHandler(['status message' => 'woohoo!']);
     }
 
     /**
@@ -146,53 +135,58 @@ class TicketController extends BaseController
         $ticket_object = json_decode($request->getContent());
         $ticket = $this->saveTicketWithRelations($ticket_object);
 
-        return $ticket;
+        return $this->manualResponseHandler($ticket);
     }
 
     /**
-     * @Route("/rest/v1/ticket")
+     * @Route("/rest/v1/ticket/{ticket_id}")
      * @Method({"PUT"})
      */
-    public function putAction(Request $request)
+    public function putAction(Request $request, $ticket_id)
     {
         $ticket_object = json_decode($request->getContent());
-        $ticket = $this->saveTicketWithRelations($ticket_object, true);
+        $ticket = $this->saveTicketWithRelations($ticket_object, $ticket_id);
 
-        return $ticket;
+        return $this->manualResponseHandler($ticket);
     }
 
-    protected function saveTicketWithRelations(\stdClass $ticketObject, $update = false)
+    protected function saveTicketWithRelations(Ticket $ticketObject, $ticket_id = null)
     {
         $this->manualConstruct();
-        $odaEntityManager = $this->get('oda.oda_entity_manager');
-        $address = $odaEntityManager->setAddress($ticketObject->address);
-        $user = $odaEntityManager->getUser($ticketObject->user);
-        $manager = $odaEntityManager->getManager($ticketObject->manager);
-        $category = $odaEntityManager->getCategory($ticketObject->category);
-        if ($update && ($ticket = $this->ticketRepository->find($ticketObject->id))) {
-
+        if ($ticket_id) {
+            $ticket = $this->ticketRepository->find($ticket_id);
+            if (!$ticket) {
+                throw new NotFoundHttpException('Ticket was not found');
+            }
         } else {
             $ticket = new Ticket();
             $ticket->setCreatedDate(time());
+            $ticket->setState($this->entityManager->getRepository('ODADneprMockServiceBundle:State')->find(TicketState::NEW_TICKET));
         }
-        $ticket->setUser($user);
-        $ticket->setAddress($address);
-        $ticket->setManager($manager);
-        $ticket->setCategory($category);
-        $ticket->setTitle(!empty($ticketObject->title) ? $ticketObject->title : '');
-        $ticket->setBody($ticketObject->body);
-        if (!empty($ticketObject->completed_date)) {
-            $ticket->setCompletedDate($ticketObject->completed_date);
+        $ticket->setAddress($this->odaManager->setAddress($ticketObject->getAddress()));
+
+        $ticket->setUser($this->odaManager->getUser($ticketObject->getUser()));
+        $ticket->setCategory($this->odaManager->getCategory($ticketObject->getCategory()));
+        $ticket->setType($this->odaManager->getType($ticketObject->getType()));
+        $ticket->setTitle($ticketObject->getTitle());
+        $ticket->setBody($ticketObject->getBody());
+        $ticket->setCompletedDate($ticketObject->getCompletedDate());
+        $ticket->setTicketId($ticketObject->getTicketId());
+        $ticket->setImage($ticketObject->getImage());
+        $ticket->setComment($ticketObject->getComment());
+
+        $validator = $this->get('validator');
+        $errors = $validator->validate($ticket);
+        if ($errors->count() > 0) {
+            throw new BadRequestHttpException(json_encode($this->serializer->toArray($errors)));
         }
-        $ticket->setState($ticketObject->state);
-        $ticket->setTicketid(!empty($ticketObject->ticket_id) ? $ticketObject->ticket_id : '');
-        if (!empty($ticketObject->image)) {
-          $ticket->setImage($ticketObject->image);
+
+        if ($ticket_id) {
+            $this->entityManager->merge($ticket);
         }
-        if (!empty($ticketObject->comment)) {
-            $ticket->setComment($ticketObject->comment);
+        else {
+            $this->entityManager->persist($ticket);
         }
-        $this->entityManager->persist($ticket);
         $this->entityManager->flush();
 
         return $ticket;

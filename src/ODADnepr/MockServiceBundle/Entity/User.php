@@ -79,7 +79,7 @@ class User implements SecurityUserInterface
 
     /**
      * @var Facilities
-     *
+     * @Assert\NotBlank()
      * @ManyToOne(targetEntity="Facilities")
      * @JoinColumn(name="facilities_id", referencedColumnName="id", nullable=false)
      */
@@ -87,7 +87,7 @@ class User implements SecurityUserInterface
 
     /**
      * @var SocialCondition
-     *
+     * @Assert\NotBlank()
      * @ManyToOne(targetEntity="SocialCondition")
      * @JoinColumn(name="social_condition_id", referencedColumnName="id", nullable=false)
      */
@@ -95,8 +95,8 @@ class User implements SecurityUserInterface
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="gender", type="string", length=255, nullable=true)
+     * @Assert\Choice(choices = {"male", "female"}, message = "Choose a valid gender.")
+     * @ORM\Column(name="gender", type="string", length=255)
      */
     private $gender;
 
@@ -109,7 +109,7 @@ class User implements SecurityUserInterface
 
     /**
      * @var Address
-     *
+     * @Assert\NotBlank()
      * @ManyToOne(targetEntity="Address", cascade={"persist"})
      * @JoinColumn(name="address_id", referencedColumnName="id")
      */
@@ -394,7 +394,7 @@ class User implements SecurityUserInterface
     /**
      * Get address
      *
-     * @return \stdClass 
+     * @return Address
      */
     public function getAddress()
     {
