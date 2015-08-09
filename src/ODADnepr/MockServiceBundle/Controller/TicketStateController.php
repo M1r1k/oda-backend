@@ -8,13 +8,13 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 
-class ManagerController extends FOSRestController
+class TicketStateController extends FOSRestController
 {
 
     /**
      * @var \Doctrine\Common\Persistence\ObjectRepository
      */
-    protected $managerRepository;
+    protected $ticketStateRepository;
 
     /**
      * @var \Doctrine\Common\Persistence\ObjectManager
@@ -24,57 +24,57 @@ class ManagerController extends FOSRestController
     public function manualConstruct()
     {
         $this->entityManager = $this->getDoctrine()->getManager();
-        $this->managerRepository = $this->entityManager->getRepository('ODADneprMockServiceBundle:Manager');
+        $this->ticketStateRepository = $this->entityManager->getRepository('ODADneprMockServiceBundle:TicketState');
     }
 
     /**
      * @ApiDoc(
      *   resource=true,
-     *   description="AUTHORIZATION REQUIRED!!! Returns list of managers",
-     *   output="ODADnepr\MockServiceBundle\Entity\Manager",
+     *   description="AUTHORIZATION REQUIRED!!! Returns list of ticket states",
+     *   output="ODADnepr\MockServiceBundle\Entity\TicketState",
      *   statusCodes={
      *     200="Returned when authorization was successful",
      *     403="Returned when the user is not authorized"
      *   }
      * )
      *
-     * @Route("/rest/v1/managers")
+     * @Route("/rest/v1/ticket-states")
      * @Method({"GET"})
      */
     public function indexAction()
     {
         $this->manualConstruct();
 
-        $tickets = $this->managerRepository->findAll();
+        $tickets = $this->ticketStateRepository->findAll();
         return $tickets;
     }
 
     /**
      * @ApiDoc(
      *   resource=true,
-     *   description="AUTHORIZATION REQUIRED!!! Returns Manager with requested ID",
+     *   description="AUTHORIZATION REQUIRED!!! Returns Ticket State with requested ID",
      *   requirements={
      *     {
-     *       "name"="manager_id",
+     *       "name"="state_id",
      *       "dataType"="integer",
      *       "required"=true,
-     *       "description"="Manager ID"
+     *       "description"="State ID"
      *     }
      *   },
-     *   output="ODADnepr\MockServiceBundle\Entity\Manager",
+     *   output="ODADnepr\MockServiceBundle\Entity\TicketState",
      *   statusCodes={
      *     200="Returned when authorization was successful",
      *     403="Returned when the user is not authorized"
      *   }
      * )
      *
-     * @Route("/rest/v1/manager/{manager_id}")
+     * @Route("/rest/v1/ticket-category/{state_id}")
      * @Method({"GET"})
      */
-    public function getAction($manager_id)
+    public function getAction($state_id)
     {
         $this->manualConstruct();
 
-        return $this->managerRepository->find($manager_id);
+        return $this->ticketStateRepository->find($state_id);
     }
 }

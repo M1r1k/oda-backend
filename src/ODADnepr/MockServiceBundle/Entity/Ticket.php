@@ -59,6 +59,14 @@ class Ticket
     private $category;
 
     /**
+     * @var TicketType
+     *
+     * @ManyToOne(targetEntity="TicketType")
+     * @JoinColumn(name="type_id", referencedColumnName="id", nullable=false)
+     */
+    private $type;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=255)
@@ -87,9 +95,10 @@ class Ticket
     private $completed_date;
 
     /**
-     * @var integer
+     * @var TicketState
      *
-     * @ORM\Column(name="state", type="integer")
+     * @ManyToOne(targetEntity="TicketCategory")
+     * @JoinColumn(name="state_id", referencedColumnName="id", nullable=false)
      */
     private $state;
 
@@ -177,7 +186,7 @@ class Ticket
      * @param Manager $manager
      * @return Ticket
      */
-    public function setManager($manager)
+    public function setManager(Manager $manager)
     {
         $this->manager = $manager;
     
@@ -200,7 +209,7 @@ class Ticket
      * @param TicketCategory $category
      * @return Ticket
      */
-    public function setCategory($category)
+    public function setCategory(TicketCategory $category)
     {
         $this->category = $category;
 
@@ -215,6 +224,29 @@ class Ticket
     public function getCategory()
     {
         return $this->category;
+    }
+
+    /**
+     * Set type
+     *
+     * @param TicketType $type
+     * @return Ticket
+     */
+    public function setType(TicketType $type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return TicketType
+     */
+    public function getType()
+    {
+        return $this->type;
     }
 
     /**
@@ -312,10 +344,10 @@ class Ticket
     /**
      * Set state
      *
-     * @param integer $state
+     * @param TicketState $state
      * @return Ticket
      */
-    public function setState($state)
+    public function setState(TicketState $state)
     {
         $this->state = $state;
     
@@ -325,7 +357,7 @@ class Ticket
     /**
      * Get state
      *
-     * @return integer
+     * @return TicketState
      */
     public function getState()
     {

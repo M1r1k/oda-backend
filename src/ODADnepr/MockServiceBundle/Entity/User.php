@@ -21,6 +21,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class User implements SecurityUserInterface
 {
+
+    const GENDER_MALE = 'male';
+    const GENDER_FEMALE = 'female';
+
     /**
      * @var integer
      *
@@ -63,7 +67,8 @@ class User implements SecurityUserInterface
      * @Assert\NotBlank
      * @ORM\Column(name="birthday", type="integer")
      */
-    private $birthday;
+  // @todo remove
+    private $birthday = 1438793276;
 
     /**
      * @var string
@@ -71,6 +76,27 @@ class User implements SecurityUserInterface
      * @ORM\Column(name="image", type="string", nullable=true)
      */
     private $image;
+
+    /**
+     * @var Facilities
+     *
+     * @ManyToOne(targetEntity="Facilities")
+     * @JoinColumn(name="facilities_id", referencedColumnName="id", nullable=false)
+     */
+    private $facilities;
+
+    /**
+     * @var SocialCondition
+     *
+     * @ManyToOne(targetEntity="SocialCondition")
+     * @JoinColumn(name="social_condition_id", referencedColumnName="id", nullable=false)
+     */
+    private $socialCondition;
+
+    /**
+     * @var string
+     */
+    private $gender;
 
     /**
      * @var string
@@ -207,6 +233,78 @@ class User implements SecurityUserInterface
     public function getEmail()
     {
         return $this->email;
+    }
+
+    /**
+     * Set gender
+     *
+     * @param string $gender
+     * @return User
+     */
+    public function setGender($gender)
+    {
+        if (!in_array($gender, array(self::GENDER_FEMALE, self::GENDER_MALE))) {
+          throw new \InvalidArgumentException("Invalid status");
+        }
+        $this->gender = $gender;
+
+        return $this;
+    }
+
+    /**
+     * Get gender
+     *
+     * @return string
+     */
+    public function getGender()
+    {
+        return $this->gender;
+    }
+
+    /**
+     * Set facilities
+     *
+     * @param Facilities $facilities
+     * @return User
+     */
+    public function setFacilities(Facilities $facilities)
+    {
+        $this->facilities = $facilities;
+
+        return $this;
+    }
+
+    /**
+     * Get facilities
+     *
+     * @return Facilities
+     */
+    public function getFacilities()
+    {
+        return $this->facilities;
+    }
+
+    /**
+     * Set social condition
+     *
+     * @param SocialCondition $socialCondition
+     * @return User
+     */
+    public function setSocialCondition(SocialCondition $socialCondition)
+    {
+        $this->socialCondition = $socialCondition;
+
+        return $this;
+    }
+
+    /**
+     * Get social condition
+     *
+     * @return SocialCondition
+     */
+    public function getSocialCondition()
+    {
+        return $this->socialCondition;
     }
 
     /**

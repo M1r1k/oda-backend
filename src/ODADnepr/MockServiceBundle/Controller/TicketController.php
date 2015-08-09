@@ -49,6 +49,21 @@ class TicketController extends FOSRestController
     }
 
     /**
+     * @ApiDoc(
+     *   resource=true,
+     *   description="Returns list of tickets",
+     *   output="ODADnepr\MockServiceBundle\Entity\Ticket",
+     *   filters={
+     *     {"name"="state", "dataType"="string"},
+     *     {"name"="title", "dataType"="string"},
+     *     {"name"="category", "dataType"="string"}
+     *   },
+     *   statusCodes={
+     *     200="Returned when authorization was successful",
+     *     403="Returned when the user is not authorized"
+     *   }
+     * )
+     *
      * @Route("/rest/v1/tickets")
      * @Method({"GET"})
      * @Template
