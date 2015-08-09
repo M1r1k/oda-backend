@@ -4,6 +4,7 @@ namespace ODADnepr\MockServiceBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToOne;
 
 /**
@@ -24,25 +25,25 @@ class Address
     private $id;
 
     /**
-     * @OneToOne(targetEntity="District")
+     * @ManyToOne(targetEntity="District")
      * @JoinColumn(name="district_id", referencedColumnName="id")
      */
     private $district;
 
     /**
-     * @OneToOne(targetEntity="City")
+     * @ManyToOne(targetEntity="City")
      * @JoinColumn(name="city_id", referencedColumnName="id")
      */
     private $city;
 
     /**
-     * @OneToOne(targetEntity="Street")
+     * @ManyToOne(targetEntity="Street")
      * @JoinColumn(name="street_id", referencedColumnName="id")
      */
     private $street;
 
     /**
-     * @OneToOne(targetEntity="House")
+     * @ManyToOne(targetEntity="House")
      * @JoinColumn(name="house_id", referencedColumnName="id")
      */
     private $house;
