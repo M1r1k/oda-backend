@@ -2,6 +2,7 @@
 
 namespace ODADnepr\MockServiceBundle\Controller;
 
+use Doctrine\ORM\Query;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use FOS\RestBundle\Controller\FOSRestController;
 use ODADnepr\MockServiceBundle\Entity\Ticket;
@@ -71,17 +72,55 @@ class TicketController extends FOSRestController
     public function indexAction(Request $request)
     {
         $this->manualConstruct();
+        $keys = [
+            'category' => 'category',
+            'state' => 'state',
+            'title' => 'title',
+            'amount' => 'amount',
+            'offset' => 'offset',
+        ];
 
-        $parameters = $request->query->all();
-        $where = '';
+        $args = array_intersect_key($request->query->all(), $keys);
 
-        if (!empty($parameters['category'])) {
+        if (!empty($args)) {
+            $where = $parameters = [];
 
+            if (!empty($args['category'])) {
+                $where[] = "t.category=:category";
+                $parameters['category'] = $args['category'];
+            }
+            if (!empty($args['state'])) {
+                $where[] = "t.state IN (:state)";
+                $parameters['state'] = explode(',', $args['state']);
+            }
+            if (!empty($args['title'])) {
+                $where[] = "t.title LIKE :title";
+                $parameters['title'] = '%' . $args['title'] . '%';
+            }
+
+            /** @var Query $query */
+            $query = $this->entityManager->createQuery(
+                'SELECT t
+                FROM ODADneprMockServiceBundle:Ticket t' .
+                (empty($where) ? '' : (' WHERE (' . implode(') AND (', $where) . ')'))
+            );
+
+            $query->setParameters($parameters);
+
+
+            if (!empty($args['amount'])) {
+                $query->setMaxResults($args['amount']);
+            }
+
+            if (!empty($args['offset'])) {
+                $query->setFirstResult($args['offset']);
+            }
+
+            $tickets = $query->getResult();
         }
-
-        $this->entityManager->createQuery('SELECT t FROM ODADneprMockServiceBundle:Ticket t ' . $where . ' t.');
-
-        $tickets = $this->ticketRepository->findAll();
+        else {
+            $tickets = $this->ticketRepository->findAll();
+        }
         return $this->manualResponseHandler($tickets);
     }
 
