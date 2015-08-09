@@ -174,6 +174,8 @@ class UserController extends BaseController
             $user = $this->userRepository->find($user->getId());
         }
         $user->setAddress($this->odaManager->setAddress($user->getAddress()));
+        $user->setFacilities($this->odaManager->setFacilities($user->getFacilities()));
+        $user->setSocialCondition($this->odaManager->setSocialCondition($user->getSocialCondition()));
         $validator = $this->get('validator');
         $errors = $validator->validate($user);
         if ($errors->count() == 0) {

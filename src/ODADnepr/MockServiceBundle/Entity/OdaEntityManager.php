@@ -95,6 +95,26 @@ class OdaEntityManager
         return $house;
     }
 
+    public function setFacilities(Facilities $facilities) {
+        $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:Facilities');
+        $facilities = $repo->find($facilities->getId());
+        if (!$facilities) {
+            throw new NotFoundHttpException('Facilities with ID=' . $facilities->getId() . ' was not found');
+        }
+
+        return $facilities;
+    }
+
+    public function setSocialCondition(SocialCondition $socialCondition) {
+        $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:SocialCondition');
+        $socialCondition = $repo->find($socialCondition->getId());
+        if (!$socialCondition) {
+            throw new NotFoundHttpException('Social condition with ID=' . $socialCondition->getId() . ' was not found');
+        }
+
+        return $socialCondition;
+    }
+
     public function getUser(\stdClass $user_object)
     {
         $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:User');
