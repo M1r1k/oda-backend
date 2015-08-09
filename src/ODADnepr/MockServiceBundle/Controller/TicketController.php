@@ -40,7 +40,6 @@ class TicketController extends BaseController
      *   },
      *   statusCodes={
      *     200="Returned when authorization was successful",
-     *     403="Returned when the user is not authorized"
      *   }
      * )
      *
@@ -104,29 +103,80 @@ class TicketController extends BaseController
     }
 
     /**
-     * @Route("/rest/v1/ticket/{id}")
+     * @ApiDoc(
+     *   resource=true,
+     *   description="Returns ticket",
+     *   output="ODADnepr\MockServiceBundle\Entity\Ticket",
+     *   requirements={
+     *     {
+     *       "name"="ticket_id",
+     *       "dataType"="integer",
+     *       "required"=true,
+     *       "description"="Ticket ID"
+     *     }
+     *   },
+     *   statusCodes={
+     *     200="Returned when authorization was successful",
+     *     404="Returned when ticket was not found",
+     *   }
+     * )
+     * @Route("/rest/v1/ticket/{ticket_id}")
      * @Method({"GET"})
      */
-    public function getAction($id)
+    public function getAction($ticket_id)
     {
         $this->manualConstruct();
+        $ticket = $this->ticketRepository->find($ticket_id);
+        if (!$ticket) {
+            throw new NotFoundHttpException('Ticket was not found');
+        }
 
-        return $this->manualResponseHandler($this->ticketRepository->find($id));
+        return $this->manualResponseHandler($ticket);
     }
 
     /**
-     * @Route("/rest/v1/ticket/{id}")
+     * @ApiDoc(
+     *   resource=true,
+     *   description="Deletes ticket",
+     *   output="ODADnepr\MockServiceBundle\Entity\Ticket",
+     *   requirements={
+     *     {
+     *       "name"="ticket_id",
+     *       "dataType"="integer",
+     *       "required"=true,
+     *       "description"="Ticket ID"
+     *     }
+     *   },
+     *   statusCodes={
+     *     200="Returned when authorization was successful",
+     *     404="Returned when ticket was not found",
+     *   }
+     * )
+     * @Route("/rest/v1/ticket/{ticket_id}")
      * @Method({"DELETE"})
      */
-    public function deleteAction($id)
+    public function deleteAction($ticket_id)
     {
         $this->manualConstruct();
-        $ticket = $this->ticketRepository->find($id);
+        $ticket = $this->ticketRepository->find($ticket_id);
+        if (!$ticket) {
+            throw new NotFoundHttpException('Ticket was not found');
+        }
         $this->entityManager->remove($ticket);
         return $this->manualResponseHandler(['status message' => 'woohoo!']);
     }
 
     /**
+     * @ApiDoc(
+     *   resource=true,
+     *   description="AUTHORIZATION REQUIRED!!! Creates ticket.",
+     *   input="ODADnepr\MockServiceBundle\Form\TicketType",
+     *   output="ODADnepr\MockServiceBundle\Entity\Ticket",
+     *   statusCodes={
+     *     200="Returned when authorization was successful",
+     *     403="Returned when the user is not authorized"
+     *   }
+     * )
      * @Route("/rest/v1/ticket")
      * @Method({"POST"})
      */
@@ -140,6 +190,25 @@ class TicketController extends BaseController
     }
 
     /**
+     * @ApiDoc(
+     *   resource=true,
+     *   description="AUTHORIZATION REQUIRED!!! Updates ticket by given ID.",
+     *   requirements={
+     *     {
+     *       "name"="$ticket_id",
+     *       "dataType"="integer",
+     *       "required"=true,
+     *       "description"="Ticket ID"
+     *     }
+     *   },
+     *   input="ODADnepr\MockServiceBundle\Form\TicketType",
+     *   output="ODADnepr\MockServiceBundle\Entity\Ticket",
+     *   statusCodes={
+     *     200="Returned when authorization was successful",
+     *     403="Returned when the user is not authorized",
+     *     404="Given ticket was not found"
+     *   }
+     * )
      * @Route("/rest/v1/ticket/{ticket_id}")
      * @Method({"PUT"})
      */
