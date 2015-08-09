@@ -66,7 +66,7 @@ class OdaEntityManager
         $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:City');
         $city = $repo->find($city_object->getId());
         if (!$city) {
-            throw new NotFoundHttpException('City with ID=' . $city->getId() . ' was not found');
+            throw new NotFoundHttpException('City with ID=' . $city_object->getId() . ' was not found');
         }
 
         return $city;
@@ -78,7 +78,7 @@ class OdaEntityManager
         $street = $repo->find($street_object->getId());
 
         if (!$street) {
-            throw new NotFoundHttpException('Street with ID=' . $street->getId() . ' was not found');
+            throw new NotFoundHttpException('Street with ID=' . $street_object->getId() . ' was not found');
         }
 
         return $street;
@@ -89,27 +89,27 @@ class OdaEntityManager
         $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:House');
         $house = $repo->find($house_object->getId());
         if (!$house) {
-            throw new NotFoundHttpException('House with ID=' . $house->getId() . ' was not found');
+            throw new NotFoundHttpException('House with ID=' . $house_object->getId() . ' was not found');
         }
 
         return $house;
     }
 
-    public function setFacilities(Facilities $facilities) {
+    public function setFacilities(Facilities $facilitiesObject) {
         $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:Facilities');
-        $facilities = $repo->find($facilities->getId());
+        $facilities = $repo->find($facilitiesObject->getId());
         if (!$facilities) {
-            throw new NotFoundHttpException('Facilities with ID=' . $facilities->getId() . ' was not found');
+            throw new NotFoundHttpException('Facilities with ID=' . $facilitiesObject->getId() . ' was not found');
         }
 
         return $facilities;
     }
 
-    public function setSocialCondition(SocialCondition $socialCondition) {
+    public function setSocialCondition(SocialCondition $socialConditionObject) {
         $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:SocialCondition');
-        $socialCondition = $repo->find($socialCondition->getId());
+        $socialCondition = $repo->find($socialConditionObject->getId());
         if (!$socialCondition) {
-            throw new NotFoundHttpException('Social condition with ID=' . $socialCondition->getId() . ' was not found');
+            throw new NotFoundHttpException('Social condition with ID=' . $socialConditionObject->getId() . ' was not found');
         }
 
         return $socialCondition;
@@ -145,25 +145,25 @@ class OdaEntityManager
         return $manager;
     }
 
-    public function getCategory(TicketCategory $category_object)
+    public function getCategory(TicketCategory $categoryObject)
     {
         $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:TicketCategory');
 
-        $category = $repo->find($category_object->getId());
+        $category = $repo->find($categoryObject->getId());
         if (!$category) {
-            throw new NotFoundHttpException('Ticket category with ID=' . $category->getId() . ' was not found');
+            throw new NotFoundHttpException('Ticket category with ID=' . $categoryObject->getId() . ' was not found');
         }
 
         return $category;
     }
 
-    public function getType(TicketType $type)
+    public function getType(TicketType $typeObject)
     {
         $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:TicketType');
 
-        $type = $repo->find($type->getId());
+        $type = $repo->find($typeObject->getId());
         if (!$type) {
-            throw new NotFoundHttpException('Ticket type with ID=' . $type->getId() . ' was not found');
+            throw new NotFoundHttpException('Ticket type with ID=' . $typeObject->getId() . ' was not found');
         }
 
         return $type;
