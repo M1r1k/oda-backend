@@ -154,7 +154,8 @@ class UserController extends BaseController
      */
     public function putAction(Request $request, $user_id)
     {
-        $user_object = json_decode($request->getContent());
+        $this->manualConstruct();
+        $user_object = $this->serializer->deserialize($request->getContent(), 'ODADnepr\MockServiceBundle\Entity\User', 'json');
         $user = $this->saveUserWithRelations($user_object, $user_id);
 
       return $this->manualResponseHandler($user);
@@ -170,14 +171,15 @@ class UserController extends BaseController
         }
         else {
             $user = new User();
+            $user->setPassword($userObject->getPassword());
         }
         $user->setFirstName($userObject->getFirstName());
         $user->setLastName($userObject->getLastName());
         $user->setBirthday($userObject->getBirthday());
         $user->setEmail($userObject->getEmail());
-        $user->setGender($user->getGender());
-        $user->setImage($user->getImage());
-        $user->setPhone($user->getPhone());
+        $user->setGender($userObject->getGender());
+        $user->setImage($userObject->getImage());
+        $user->setPhone($userObject->getPhone());
         $user->setAddress($this->odaManager->setAddress($userObject->getAddress()));
         $user->setFacilities($this->odaManager->setFacilities($userObject->getFacilities()));
         $user->setSocialCondition($this->odaManager->setSocialCondition($userObject->getSocialCondition()));

@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping\JoinTable;
 use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\ManyToOne;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Ticket
@@ -95,7 +96,7 @@ class Ticket
     /**
      * @var TicketState
      *
-     * @ManyToOne(targetEntity="TicketCategory")
+     * @ManyToOne(targetEntity="TicketState")
      * @JoinColumn(name="state_id", referencedColumnName="id", nullable=false)
      */
     private $state;

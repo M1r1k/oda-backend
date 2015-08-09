@@ -132,7 +132,8 @@ class TicketController extends BaseController
      */
     public function postAction(Request $request)
     {
-        $ticket_object = json_decode($request->getContent());
+        $this->manualConstruct();
+        $ticket_object = $this->serializer->deserialize($request->getContent(), 'ODADnepr\MockServiceBundle\Entity\Ticket', 'json');
         $ticket = $this->saveTicketWithRelations($ticket_object);
 
         return $this->manualResponseHandler($ticket);
@@ -144,7 +145,8 @@ class TicketController extends BaseController
      */
     public function putAction(Request $request, $ticket_id)
     {
-        $ticket_object = json_decode($request->getContent());
+        $this->manualConstruct();
+        $ticket_object = $this->serializer->deserialize($request->getContent(), 'ODADnepr\MockServiceBundle\Entity\Ticket', 'json');
         $ticket = $this->saveTicketWithRelations($ticket_object, $ticket_id);
 
         return $this->manualResponseHandler($ticket);
@@ -161,7 +163,7 @@ class TicketController extends BaseController
         } else {
             $ticket = new Ticket();
             $ticket->setCreatedDate(time());
-            $ticket->setState($this->entityManager->getRepository('ODADneprMockServiceBundle:State')->find(TicketState::NEW_TICKET));
+            $ticket->setState($this->entityManager->getRepository('ODADneprMockServiceBundle:TicketState')->find(TicketState::NEW_TICKET));
         }
         $ticket->setAddress($this->odaManager->setAddress($ticketObject->getAddress()));
 

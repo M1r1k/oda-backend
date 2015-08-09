@@ -245,9 +245,6 @@ class User implements SecurityUserInterface
      */
     public function setGender($gender)
     {
-        if (!in_array($gender, array(self::GENDER_FEMALE, self::GENDER_MALE))) {
-          throw new \InvalidArgumentException("Invalid status");
-        }
         $this->gender = $gender;
 
         return $this;
