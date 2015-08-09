@@ -2,6 +2,7 @@
 
 namespace ODADnepr\MockServiceBundle\Controller;
 
+use Doctrine\ORM\Query;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use FOS\RestBundle\Controller\FOSRestController;
 use ODADnepr\MockServiceBundle\Entity\Ticket;
@@ -71,38 +72,49 @@ class TicketController extends FOSRestController
     public function indexAction(Request $request)
     {
         $this->manualConstruct();
+        $keys = [
+            'category' => 'category',
+            'state' => 'state',
+            'title' => 'title',
+            'amount' => 'amount',
+            'offset' => 'offset',
+        ];
 
-        $args = $request->query->all();
-        $where = $parameters = [];
+        $args = array_intersect_key($request->query->all(), $keys);
 
-        if (!empty($args['category'])) {
-            $where[] = "t.category=:category";
-            $parameters['category'] = $args['category'];
-        }
-        if (!empty($args['state'])) {
-            $where[] = "t.state=:state";
-            $parameters['state'] = $args['state'];
-        }
-        if (!empty($args['title'])) {
-            $where[] = "t.title like :title";
-            $parameters['title'] = '%' . $args['title'] . '%';
-        }
+        if (!empty($args)) {
+            $where = $parameters = [];
 
-        if (!empty($parameters)) {
+            if (!empty($args['category'])) {
+                $where[] = "t.category=:category";
+                $parameters['category'] = $args['category'];
+            }
+            if (!empty($args['state'])) {
+                $where[] = "t.state IN (:state)";
+                $parameters['state'] = explode(',', $args['state']);
+            }
+            if (!empty($args['title'])) {
+                $where[] = "t.title LIKE :title";
+                $parameters['title'] = '%' . $args['title'] . '%';
+            }
+
+            /** @var Query $query */
             $query = $this->entityManager->createQuery(
                 'SELECT t
-                FROM ODADneprMockServiceBundle:Ticket t
-                WHERE ((' . implode(') AND (', $where) . '))');
-            foreach ($parameters as $key => $value) {
-                $query->setParameter($key, $value);
-            }
+                FROM ODADneprMockServiceBundle:Ticket t' .
+                (empty($where) ? '' : (' WHERE (' . implode(') AND (', $where) . ')'))
+            );
+
+            $query->setParameters($parameters);
+
+
             if (!empty($args['amount'])) {
                 $query->setMaxResults($args['amount']);
             }
+
             if (!empty($args['offset'])) {
                 $query->setFirstResult($args['offset']);
             }
-
 
             $tickets = $query->getResult();
         }
