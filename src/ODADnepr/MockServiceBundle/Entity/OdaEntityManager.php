@@ -4,6 +4,7 @@ namespace ODADnepr\MockServiceBundle\Entity;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 
 /**
@@ -27,20 +28,21 @@ class OdaEntityManager
         $this->entityManager = $entityManager;
     }
 
-    public function setAddress(\stdClass $address)
+    public function setAddress(Address $address)
     {
         $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:Address');
-        if (!($address_entity = $repo->find($address->id))) {
-            $district = $this->setDistrict($address->district);
-            $city = $this->setCity($address->city, $district);
-            $street = $this->setStreet($address->street, $city);
-            $house = $this->setHouse($address->house, $street);
+        $id = $address->getId();
+        if (!$id || !($address_entity = $repo->find($address->getId()))) {
+            $district = $this->setDistrict($address->getDistrict());
+            $city = $this->setCity($address->getCity());
+            $street = $this->setStreet($address->getStreet());
+            $house = $this->setHouse($address->getHouse());
             $address_entity = new Address();
             $address_entity->setStreet($street);
             $address_entity->setCity($city);
             $address_entity->setDistrict($district);
             $address_entity->setHouse($house);
-            $address_entity->setFlat($address->flat);
+            $address_entity->setFlat($address->getFlat());
             $this->entityManager->persist($address_entity);
             $this->entityManager->flush();
         }
@@ -48,56 +50,46 @@ class OdaEntityManager
         return $address_entity;
     }
 
-    public function setDistrict(\stdClass $district_object)
+    public function setDistrict(District $district_object)
     {
         $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:District');
-        if (!($district = $repo->find($district_object->id))) {
-            $district = new District();
-            $district->setName($district_object->name);
-            $this->entityManager->persist($district);
-            $this->entityManager->flush();
+        $district = $repo->find($district_object->getId());
+        if (!$district) {
+            throw new NotFoundHttpException('District with ID=' . $district_object->getId() . ' was not found');
         }
 
         return $district;
     }
 
-    public function setCity(\stdClass $city_object, District $district)
+    public function setCity(City $city_object)
     {
         $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:City');
-        if (!($city = $repo->find($city_object->id))) {
-            $city = new City();
-            $city->setName($city_object->name);
-            $city->setDistrict($district);
-            $this->entityManager->persist($city);
-            $this->entityManager->flush();
+        $city = $repo->find($city_object->getId());
+        if (!$city) {
+            throw new NotFoundHttpException('City with ID=' . $city->getId() . ' was not found');
         }
 
         return $city;
     }
 
-    public function setStreet(\stdClass $street_object, City $city)
+    public function setStreet(Street $street_object)
     {
         $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:Street');
-        if (!($street = $repo->find($street_object->id))) {
-            $street = new Street();
-            $street->setName($street_object->name);
-            $street->setCity($city);
-            $this->entityManager->persist($street);
-            $this->entityManager->flush();
+        $street = $repo->find($street_object->getId());
+
+        if (!$street) {
+            throw new NotFoundHttpException('Street with ID=' . $street->getId() . ' was not found');
         }
 
         return $street;
     }
 
-    public function setHouse(\stdClass $house_object, Street $street)
+    public function setHouse(House $house_object)
     {
         $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:House');
-        if (!($house = $repo->find($house_object->id))) {
-            $house = new House();
-            $house->setName($house_object->name);
-            $house->setStreet($street);
-            $this->entityManager->persist($house);
-            $this->entityManager->flush();
+        $house = $repo->find($house_object->getId());
+        if (!$house) {
+            throw new NotFoundHttpException('House with ID=' . $house->getId() . ' was not found');
         }
 
         return $house;

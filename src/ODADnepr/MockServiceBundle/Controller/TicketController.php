@@ -12,7 +12,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Component\HttpFoundation\Request;
 
-class TicketController extends FOSRestController
+class TicketController extends BaseController
 {
 
     /**
@@ -20,20 +20,10 @@ class TicketController extends FOSRestController
      */
     protected $ticketRepository;
 
-    /**
-     * @var \Doctrine\Common\Persistence\ObjectManager
-     */
-    protected $entityManager;
-
     public function manualConstruct()
     {
-        $this->entityManager = $this->getDoctrine()->getManager();
+        parent::manualConstruct();
         $this->ticketRepository = $this->entityManager->getRepository('ODADneprMockServiceBundle:Ticket');
-    }
-
-    protected function manualResponseHandler($data) {
-        $view = $this->view($data);
-        return $this->handleView($view);
     }
 
     /**

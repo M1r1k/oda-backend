@@ -68,7 +68,7 @@ class Address
     /**
      * Set district
      *
-     * @param integer $district
+     * @param District $district
      * @return Address
      */
     public function setDistrict($district)
@@ -81,7 +81,7 @@ class Address
     /**
      * Get district
      *
-     * @return integer 
+     * @return District
      */
     public function getDistrict()
     {
@@ -91,7 +91,7 @@ class Address
     /**
      * Set city
      *
-     * @param integer $city
+     * @param City $city
      * @return Address
      */
     public function setCity($city)
@@ -104,7 +104,7 @@ class Address
     /**
      * Get city
      *
-     * @return integer 
+     * @return City
      */
     public function getCity()
     {
@@ -114,7 +114,7 @@ class Address
     /**
      * Set street
      *
-     * @param integer $street
+     * @param Street $street
      * @return Address
      */
     public function setStreet($street)
@@ -127,7 +127,7 @@ class Address
     /**
      * Get street
      *
-     * @return integer 
+     * @return Street
      */
     public function getStreet()
     {

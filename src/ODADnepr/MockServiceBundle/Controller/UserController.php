@@ -5,6 +5,7 @@ namespace ODADnepr\MockServiceBundle\Controller;
 use FOS\RestBundle\Controller\FOSRestController;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use ODADnepr\MockServiceBundle\Entity\Address;
+use ODADnepr\MockServiceBundle\Entity\OdaEntityManager;
 use ODADnepr\MockServiceBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -12,7 +13,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class UserController extends FOSRestController
+class UserController extends BaseController
 {
 
     /**
@@ -21,25 +22,15 @@ class UserController extends FOSRestController
     protected $userRepository;
 
     /**
-     * @var \Doctrine\Common\Persistence\ObjectManager
+     * @var OdaEntityManager
      */
-    protected $entityManager;
-
-    /**
-     * @var \JMS\Serializer\SerializerInterface
-     */
-    protected $serializer;
+    protected $odaManager;
 
     public function manualConstruct()
     {
-        $this->entityManager = $this->getDoctrine()->getManager();
-        $this->serializer = $this->get('serializer');
+        parent::manualConstruct();
         $this->userRepository = $this->entityManager->getRepository('ODADneprMockServiceBundle:User');
-    }
-
-    public function manualResponseHandler($data) {
-      $view = $this->view($data);
-      return $this->handleView($view);
+        $this->odaManager = $this->get('oda.oda_entity_manager');
     }
 
     /**
@@ -59,6 +50,7 @@ class UserController extends FOSRestController
     public function createUserAction(Request $request)
     {
         $this->manualConstruct();
+        /* @var User $user_object */
         $user_object = $this->serializer->deserialize($request->getContent(), 'ODADnepr\MockServiceBundle\Entity\User', 'json');
         $user = $this->saveUserWithRelations($user_object);
 
@@ -181,15 +173,16 @@ class UserController extends FOSRestController
         if ($update) {
             $user = $this->userRepository->find($user->getId());
         }
-        if (($address = $user->getAddress()) && $address instanceof Address) {
-
-            $this->entityManager->merge($address);
-            $user->setAddress($address);
-        }
+        $user->setAddress($this->odaManager->setAddress($user->getAddress()));
         $validator = $this->get('validator');
         $errors = $validator->validate($user);
         if ($errors->count() == 0) {
-            $this->entityManager->merge($user);
+            if ($update) {
+                $this->entityManager->merge($user);
+            }
+            else {
+                $this->entityManager->persist($user);
+            }
             $this->entityManager->flush();
             return $user;
         }
