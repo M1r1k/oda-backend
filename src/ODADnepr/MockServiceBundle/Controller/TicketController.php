@@ -72,16 +72,43 @@ class TicketController extends FOSRestController
     {
         $this->manualConstruct();
 
-        $parameters = $request->query->all();
-        $where = '';
+        $args = $request->query->all();
+        $where = $parameters = [];
 
-        if (!empty($parameters['category'])) {
-
+        if (!empty($args['category'])) {
+            $where[] = "t.category=:category";
+            $parameters['category'] = $args['category'];
+        }
+        if (!empty($args['state'])) {
+            $where[] = "t.state=:state";
+            $parameters['state'] = $args['state'];
+        }
+        if (!empty($args['title'])) {
+            $where[] = "t.title like :title";
+            $parameters['title'] = '%' . $args['title'] . '%';
         }
 
-        $this->entityManager->createQuery('SELECT t FROM ODADneprMockServiceBundle:Ticket t ' . $where . ' t.');
+        if (!empty($parameters)) {
+            $query = $this->entityManager->createQuery(
+                'SELECT t
+                FROM ODADneprMockServiceBundle:Ticket t
+                WHERE ((' . implode(') AND (', $where) . '))');
+            foreach ($parameters as $key => $value) {
+                $query->setParameter($key, $value);
+            }
+            if (!empty($args['amount'])) {
+                $query->setMaxResults($args['amount']);
+            }
+            if (!empty($args['offset'])) {
+                $query->setFirstResult($args['offset']);
+            }
 
-        $tickets = $this->ticketRepository->findAll();
+
+            $tickets = $query->getResult();
+        }
+        else {
+            $tickets = $this->ticketRepository->findAll();
+        }
         return $this->manualResponseHandler($tickets);
     }
 
