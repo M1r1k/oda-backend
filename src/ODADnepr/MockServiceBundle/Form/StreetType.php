@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class UserType extends AbstractType
+class StreetType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -15,18 +15,10 @@ class UserType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('first_name')
-            ->add('last_name')
-            ->add('middle_name')
-            ->add('email')
-            ->add('birthday')
-            ->add('image')
-            ->add('gender')
-            ->add('phone')
-            ->add('password')
-            ->add('facilities')
-            ->add('socialCondition')
-            ->add('address')
+            ->add('name')
+            ->add('city')
+            ->add('streetType')
+            ->add('cityDistrict')
         ;
     }
     
@@ -36,7 +28,7 @@ class UserType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'ODADnepr\MockServiceBundle\Entity\User'
+            'data_class' => 'ODADnepr\MockServiceBundle\Entity\Street'
         ));
     }
 
@@ -45,6 +37,6 @@ class UserType extends AbstractType
      */
     public function getName()
     {
-        return 'odadnepr_mockservicebundle_user';
+        return 'odadnepr_mockservicebundle_street';
     }
 }

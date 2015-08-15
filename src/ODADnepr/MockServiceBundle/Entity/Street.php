@@ -47,6 +47,20 @@ class Street
      */
     private $houses;
 
+    /**
+     * @var StreetType
+     * @ManyToOne(targetEntity="StreetType")
+     * @JoinColumn(name="street_type_id", referencedColumnName="id", nullable=true)
+     */
+    private $streetType;
+
+    /**
+     * @var CityDistrict
+     * @ManyToOne(targetEntity="CityDistrict")
+     * @JoinColumn(name="city_district_id", referencedColumnName="id", nullable=true)
+     */
+    private $cityDistrict;
+
     public function __construct() {
       $this->houses = new ArrayCollection();
     }
@@ -105,5 +119,53 @@ class Street
     public function getCity()
     {
         return $this->city;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHouses() {
+        return $this->houses;
+    }
+
+    /**
+     * @param string $houses
+     * @return Street
+     */
+    public function setHouses($houses) {
+        $this->houses = $houses;
+        return $this;
+    }
+
+    /**
+     * @return StreetType
+     */
+    public function getStreetType() {
+        return $this->streetType;
+    }
+
+    /**
+     * @param StreetType $streetType
+     * @return Street
+     */
+    public function setStreetType($streetType) {
+        $this->streetType = $streetType;
+        return $this;
+    }
+
+    /**
+     * @return CityDistrict
+     */
+    public function getCityDistrict() {
+        return $this->cityDistrict;
+    }
+
+    /**
+     * @param CityDistrict $cityDistrict
+     * @return Street
+     */
+    public function setCityDistrict($cityDistrict) {
+        $this->cityDisrict = $cityDistrict;
+        return $this;
     }
 }

@@ -158,7 +158,7 @@ class UserController extends BaseController
         $user_object = $this->serializer->deserialize($request->getContent(), 'ODADnepr\MockServiceBundle\Entity\User', 'json');
         $user = $this->saveUserWithRelations($user_object, $user_id);
 
-      return $this->manualResponseHandler($user);
+        return $this->manualResponseHandler($user);
     }
 
     protected function saveUserWithRelations(User $userObject, $user_id = null) {
