@@ -21,7 +21,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class User implements SecurityUserInterface
 {
-
     const GENDER_MALE = 'male';
     const GENDER_FEMALE = 'female';
 
@@ -52,6 +51,13 @@ class User implements SecurityUserInterface
      * @ORM\Column(name="last_name", type="string", length=255)
      */
     private $last_name;
+
+     /**
+     * @var string
+     * @Assert\NotBlank()
+     * @ORM\Column(name="middle_name", type="string", length=255)
+     */
+    private $middle_name;
 
     /**
      * @var string
@@ -212,6 +218,22 @@ class User implements SecurityUserInterface
     public function getLastName()
     {
         return $this->last_name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMiddleName() {
+        return $this->middle_name;
+    }
+
+    /**
+     * @param string $middle_name
+     * @return User
+     */
+    public function setMiddleName($middle_name) {
+        $this->middle_name = $middle_name;
+        return $this;
     }
 
     /**

@@ -175,6 +175,7 @@ class UserController extends BaseController
         }
         $user->setFirstName($userObject->getFirstName());
         $user->setLastName($userObject->getLastName());
+        $user->setMiddleName($userObject->getMiddleName());
         $user->setBirthday($userObject->getBirthday());
         $user->setEmail($userObject->getEmail());
         $user->setGender($userObject->getGender());
