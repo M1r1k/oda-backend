@@ -85,7 +85,6 @@ class User implements SecurityUserInterface
 
     /**
      * @var Facilities
-     * @Assert\NotBlank()
      * @ManyToOne(targetEntity="Facilities")
      * @JoinColumn(name="facilities_id", referencedColumnName="id", nullable=true)
      */
@@ -93,7 +92,6 @@ class User implements SecurityUserInterface
 
     /**
      * @var SocialCondition
-     * @Assert\NotBlank()
      * @ManyToOne(targetEntity="SocialCondition")
      * @JoinColumn(name="social_condition_id", referencedColumnName="id", nullable=true)
      */
