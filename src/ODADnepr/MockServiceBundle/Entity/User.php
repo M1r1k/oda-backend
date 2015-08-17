@@ -87,7 +87,7 @@ class User implements SecurityUserInterface
      * @var Facilities
      * @Assert\NotBlank()
      * @ManyToOne(targetEntity="Facilities")
-     * @JoinColumn(name="facilities_id", referencedColumnName="id", nullable=false)
+     * @JoinColumn(name="facilities_id", referencedColumnName="id", nullable=true)
      */
     private $facilities;
 
@@ -95,14 +95,14 @@ class User implements SecurityUserInterface
      * @var SocialCondition
      * @Assert\NotBlank()
      * @ManyToOne(targetEntity="SocialCondition")
-     * @JoinColumn(name="social_condition_id", referencedColumnName="id", nullable=false)
+     * @JoinColumn(name="social_condition_id", referencedColumnName="id", nullable=true)
      */
     private $socialCondition;
 
     /**
      * @var string
      * @Assert\Choice(choices = {"male", "female"}, message = "Choose a valid gender.")
-     * @ORM\Column(name="gender", type="string", length=255)
+     * @ORM\Column(name="gender", type="string", length=255, nullable=true)
      */
     private $gender;
 
