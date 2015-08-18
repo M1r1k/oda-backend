@@ -45,8 +45,8 @@ class UserController extends BaseController
         /* @var User $user_object */
         $user_object = $this->serializer->deserialize($request->getContent(), 'ODADnepr\MockServiceBundle\Entity\User', 'json');
         $user = $this->saveUserWithRelations($user_object);
-
-        return $this->manualResponseHandler($user);
+        $token = $this->get('lexik_jwt_authentication.jwt_manager')->create($user);
+        return $this->manualResponseHandler(['user' => $user, 'token' => $token]);
     }
 
     /**

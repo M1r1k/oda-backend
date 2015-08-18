@@ -28,8 +28,11 @@ class OdaEntityManager
         $this->entityManager = $entityManager;
     }
 
-    public function setAddress(Address $address)
+    public function setAddress(Address $address = null)
     {
+        if (!$address) {
+            return $address;
+        }
         $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:Address');
         $id = $address->getId();
         if (!$id || !($address_entity = $repo->find($address->getId()))) {
@@ -50,8 +53,11 @@ class OdaEntityManager
         return $address_entity;
     }
 
-    public function setDistrict(District $district_object)
+    public function setDistrict(District $district_object = null)
     {
+        if (!$district_object) {
+            return $district_object;
+        }
         $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:District');
         $district = $repo->find($district_object->getId());
         if (!$district) {
@@ -61,8 +67,11 @@ class OdaEntityManager
         return $district;
     }
 
-    public function setCity(City $city_object)
+    public function setCity(City $city_object = null)
     {
+        if (!$city_object) {
+            return $city_object;
+        }
         $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:City');
         $city = $repo->find($city_object->getId());
         if (!$city) {
@@ -72,8 +81,11 @@ class OdaEntityManager
         return $city;
     }
 
-    public function setStreet(Street $street_object)
+    public function setStreet(Street $street_object = null)
     {
+        if (!$street_object) {
+            return $street_object;
+        }
         $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:Street');
         $street = $repo->find($street_object->getId());
 
@@ -84,8 +96,11 @@ class OdaEntityManager
         return $street;
     }
 
-    public function setHouse(House $house_object)
+    public function setHouse(House $house_object = null)
     {
+        if (!$house_object) {
+            return $house_object;
+        }
         $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:House');
         $house = $repo->find($house_object->getId());
         if (!$house) {
@@ -95,7 +110,10 @@ class OdaEntityManager
         return $house;
     }
 
-    public function setFacilities(Facilities $facilitiesObject) {
+    public function setFacilities(Facilities $facilitiesObject = null) {
+        if (!$facilitiesObject) {
+            return $facilitiesObject;
+        }
         $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:Facilities');
         $facilities = $repo->find($facilitiesObject->getId());
         if (!$facilities) {
@@ -105,7 +123,10 @@ class OdaEntityManager
         return $facilities;
     }
 
-    public function setSocialCondition(SocialCondition $socialConditionObject) {
+    public function setSocialCondition(SocialCondition $socialConditionObject = null) {
+        if (!$socialConditionObject) {
+            return $socialConditionObject;
+        }
         $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:SocialCondition');
         $socialCondition = $repo->find($socialConditionObject->getId());
         if (!$socialCondition) {
@@ -115,8 +136,11 @@ class OdaEntityManager
         return $socialCondition;
     }
 
-    public function getUser(User $user_object)
+    public function getUser(User $user_object = null)
     {
+        if (!$user_object) {
+            return $user_object;
+        }
         $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:User');
 
         $user = $repo->find($user_object->getId());
@@ -127,10 +151,10 @@ class OdaEntityManager
         return $user;
     }
 
-    public function getManager($manager_object)
+    public function getManager($manager_object = null)
     {
-        if (is_null($manager_object)) {
-            return null;
+        if (!$manager_object) {
+            return $manager_object;
         }
 
         $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:Manager');
@@ -145,8 +169,11 @@ class OdaEntityManager
         return $manager;
     }
 
-    public function getCategory(TicketCategory $categoryObject)
+    public function getCategory(TicketCategory $categoryObject = null)
     {
+        if (!$categoryObject) {
+            return $categoryObject;
+        }
         $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:TicketCategory');
 
         $category = $repo->find($categoryObject->getId());
@@ -157,8 +184,11 @@ class OdaEntityManager
         return $category;
     }
 
-    public function getType(TicketType $typeObject)
+    public function getType(TicketType $typeObject = null)
     {
+        if (!$typeObject) {
+            return $typeObject;
+        }
         $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:TicketType');
 
         $type = $repo->find($typeObject->getId());

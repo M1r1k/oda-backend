@@ -89,6 +89,12 @@ class Ticket
 
     /**
      * @var integer
+     * @ORM\Column(name="start_date", type="integer", nullable=true)
+     */
+    private $start_date;
+
+    /**
+     * @var integer
      * @ORM\Column(name="completed_date", type="integer", nullable=true)
      */
     private $completed_date;
@@ -429,5 +435,24 @@ class Ticket
     public function getComment()
     {
         return $this->comment;
+    }
+
+    /**
+     * @return int
+     */
+    public function getStartDate()
+    {
+        return $this->start_date;
+    }
+
+    /**
+     * @param int $start_date
+     * @return Ticket
+     */
+    public function setStartDate($start_date)
+    {
+        $this->start_date = $start_date;
+
+        return $this;
     }
 }
