@@ -8,13 +8,17 @@ use Doctrine\ORM\Mapping\JoinTable;
 use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\ManyToOne;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * Ticket
  *
  * @ORM\Table()
  * @ORM\Entity
+ * @Vich\Uploadable
  */
 class Ticket
 {
@@ -95,6 +99,12 @@ class Ticket
 
     /**
      * @var integer
+     * @ORM\Column(name="updated_date", type="integer", nullable=true)
+     */
+    private $updated_date;
+
+    /**
+     * @var integer
      * @ORM\Column(name="completed_date", type="integer", nullable=true)
      */
     private $completed_date;
@@ -127,6 +137,19 @@ class Ticket
      * @ORM\Column(name="comment", type="text", nullable=true)
      */
     private $comment;
+
+    /**
+     * @var string
+     * @ORM\Column(name="image_name", type="string", length=255, nullable=true)
+     */
+    private $image_name;
+
+    /**
+     * @var File
+     *
+     * @Vich\UploadableField(mapping="ticket_image", fileNameProperty="image_name")
+     */
+    private $image_file;
 
     /**
      * Get id
@@ -453,6 +476,65 @@ class Ticket
     {
         $this->start_date = $start_date;
 
+        return $this;
+    }
+    /**
+     * If manually uploading a file (i.e. not using Symfony Form) ensure an instance
+     * of 'UploadedFile' is injected into this setter to trigger the  update. If this
+     * bundle's configuration parameter 'inject_on_load' is set to 'true' this setter
+     * must be able to accept an instance of 'File' as the bundle will inject one here
+     * during Doctrine hydration.
+     *
+     * @param File|\Symfony\Component\HttpFoundation\File\UploadedFile $image
+     */
+    public function setImageFile(File $image = null)
+    {
+        $this->image_file = $image;
+
+        if ($image) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updated_date = time();
+        }
+    }
+
+    /**
+     * @return File
+     */
+    public function getImageFile()
+    {
+        return $this->image_file;
+    }
+
+    /**
+     * @param string $image_name
+     */
+    public function setImageName($image_name)
+    {
+        $this->image_name = $image_name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getImageName()
+    {
+        return $this->image_name;
+    }
+
+    /**
+     * @return int
+     */
+    public function getUpdatedDate() {
+        return $this->updated_date;
+    }
+
+    /**
+     * @param int $updated_date
+     * @return Ticket
+     */
+    public function setUpdatedDate($updated_date) {
+        $this->updated_date = $updated_date;
         return $this;
     }
 }

@@ -110,3 +110,10 @@ fos_rest:
 sensio_framework_extra:
     view:
         annotations: false
+
+vich_uploader:
+    db_driver: orm
+    mappings:
+        ticket_image:
+            uri_prefix:         /images/tickets
+            upload_destination: %kernel.root_dir%/../web/images/tickets
