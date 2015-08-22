@@ -123,7 +123,6 @@ class User implements SecurityUserInterface
     /**
      * Encrypted password. Must be persisted.
      *
-     * @Exclude
      * @var string
      * @ORM\Column(name="password", type="string", length=255)
      */
@@ -288,7 +287,7 @@ class User implements SecurityUserInterface
      * @param Facilities $facilities
      * @return User
      */
-    public function setFacilities(Facilities $facilities)
+    public function setFacilities(Facilities $facilities = null)
     {
         $this->facilities = $facilities;
 
@@ -311,7 +310,7 @@ class User implements SecurityUserInterface
      * @param SocialCondition $socialCondition
      * @return User
      */
-    public function setSocialCondition(SocialCondition $socialCondition)
+    public function setSocialCondition(SocialCondition $socialCondition = null)
     {
         $this->socialCondition = $socialCondition;
 
