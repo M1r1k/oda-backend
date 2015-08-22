@@ -5,11 +5,13 @@ namespace ODADnepr\MockServiceBundle\Controller;
 use Doctrine\ORM\Query;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use ODADnepr\MockServiceBundle\Entity\Ticket;
+use ODADnepr\MockServiceBundle\Entity\TicketFile;
 use ODADnepr\MockServiceBundle\Entity\TicketState;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -228,9 +230,15 @@ class TicketController extends BaseController
      */
     public function uploadFileAction(Request $request, $ticket_id) {
         $this->manualConstruct();
+        /* @var File $file */
         $file = $request->files->get('ticket_image');
         $ticket = $this->ticketRepository->find($ticket_id);
-        $ticket->setImageFile($file);
+        $ticketFile = new TicketFile();
+        $ticketFile->setFile($file);
+        $ticketFile->setTicket($ticket);
+        $ticketFile->setName($file->getFilename());
+        $this->entityManager->persist($ticketFile);
+        $ticket->addFile($ticketFile);
         $this->entityManager->persist($ticket);
         $this->entityManager->flush();
 

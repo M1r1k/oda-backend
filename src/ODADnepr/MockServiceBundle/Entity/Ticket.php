@@ -2,14 +2,11 @@
 
 namespace ODADnepr\MockServiceBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\JoinColumn;
-use Doctrine\ORM\Mapping\JoinTable;
-use Doctrine\ORM\Mapping\ManyToMany;
-use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\ManyToOne;
-use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
@@ -18,7 +15,6 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *
  * @ORM\Table()
  * @ORM\Entity
- * @Vich\Uploadable
  */
 class Ticket
 {
@@ -125,11 +121,9 @@ class Ticket
     private $ticket_id;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="image", type="string", nullable=true)
+     * @ORM\OneToMany(targetEntity="TicketFile", mappedBy="ticket")
      */
-    private $image;
+    private $files;
 
     /**
      * @var string
@@ -138,18 +132,9 @@ class Ticket
      */
     private $comment;
 
-    /**
-     * @var string
-     * @ORM\Column(name="image_name", type="string", length=255, nullable=true)
-     */
-    private $image_name;
-
-    /**
-     * @var File
-     *
-     * @Vich\UploadableField(mapping="ticket_image", fileNameProperty="image_name")
-     */
-    private $image_file;
+    public function __construct() {
+        $this->features = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -415,29 +400,6 @@ class Ticket
     }
 
     /**
-     * Set image
-     *
-     * @param string $image
-     * @return Ticket
-     */
-    public function setImage($image)
-    {
-        $this->image = $image;
-    
-        return $this;
-    }
-
-    /**
-     * Get image
-     *
-     * @return string 
-     */
-    public function getImage()
-    {
-        return $this->image;
-    }
-
-    /**
      * Set comment
      *
      * @param string $comment
@@ -479,47 +441,22 @@ class Ticket
         return $this;
     }
     /**
-     * If manually uploading a file (i.e. not using Symfony Form) ensure an instance
-     * of 'UploadedFile' is injected into this setter to trigger the  update. If this
-     * bundle's configuration parameter 'inject_on_load' is set to 'true' this setter
-     * must be able to accept an instance of 'File' as the bundle will inject one here
-     * during Doctrine hydration.
+     * Add images.
      *
-     * @param File|\Symfony\Component\HttpFoundation\File\UploadedFile $image
+     * @param TicketFile $file
      */
-    public function setImageFile(File $image = null)
+    public function addFile(TicketFile $file)
     {
-        $this->image_file = $image;
+        $this->files[] = $file;
 
-        if ($image) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updated_date = time();
-        }
+        $file->setTicket($this);
     }
 
     /**
-     * @return File
+     * @return Collection
      */
-    public function getImageFile()
-    {
-        return $this->image_file;
-    }
-
-    /**
-     * @param string $image_name
-     */
-    public function setImageName($image_name)
-    {
-        $this->image_name = $image_name;
-    }
-
-    /**
-     * @return string
-     */
-    public function getImageName()
-    {
-        return $this->image_name;
+    public function getFiles() {
+        return $this->files;
     }
 
     /**

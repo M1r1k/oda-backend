@@ -114,6 +114,6 @@ sensio_framework_extra:
 vich_uploader:
     db_driver: orm
     mappings:
-        ticket_image:
-            uri_prefix:         /images/tickets
-            upload_destination: %kernel.root_dir%/../web/images/tickets
+        ticket_file:
+            uri_prefix:         /files/ticket/
+            upload_destination: %kernel.root_dir%/../web/files/ticket/
