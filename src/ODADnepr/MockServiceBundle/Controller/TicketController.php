@@ -64,8 +64,8 @@ class TicketController extends BaseController
             $where = $parameters = [];
 
             if (!empty($args['category'])) {
-                $where[] = "t.category=:category";
-                $parameters['category'] = $args['category'];
+                $where[] = "t.category IN (:category)";
+                $parameters['category'] = explode(',', $args['category']);
             }
             if (!empty($args['state'])) {
                 $where[] = "t.state IN (:state)";
