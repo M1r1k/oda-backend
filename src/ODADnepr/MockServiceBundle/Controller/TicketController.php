@@ -267,7 +267,6 @@ class TicketController extends BaseController
         $ticket->setBody($ticketObject->getBody());
         $ticket->setCompletedDate($ticketObject->getCompletedDate());
         $ticket->setTicketId($ticketObject->getTicketId());
-        $ticket->setImage($ticketObject->getImage());
         $ticket->setComment($ticketObject->getComment());
 
         $validator = $this->get('validator');
