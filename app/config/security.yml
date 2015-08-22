@@ -34,7 +34,8 @@ security:
         api:
             pattern:   ^/rest
             stateless: true
-            lexik_jwt: ~
+            lexik_jwt:
+                throw_exceptions: true
 
     access_control:
         - { path: ^/rest/v1/(address-book|vocabulary|tickets), roles: IS_AUTHENTICATED_ANONYMOUSLY }

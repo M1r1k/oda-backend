@@ -223,12 +223,11 @@ class TicketController extends BaseController
 
 
     /**
-     * @Route("/rest/v1/user/{ticket_id}/file")
+     * @Route("/rest/v1/ticket/{ticket_id}/file")
      * @Method({"POST"})
      */
-    public function uploadFile(Request $request, $ticket_id) {
+    public function uploadFileAction(Request $request, $ticket_id) {
         $this->manualConstruct();
-
         $file = $request->files->get('ticket_image');
         $ticket = $this->ticketRepository->find($ticket_id);
         $ticket->setImageFile($file);
