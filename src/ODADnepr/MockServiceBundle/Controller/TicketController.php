@@ -258,7 +258,10 @@ class TicketController extends BaseController
             $ticket->setCreatedDate(time());
             $ticket->setState($this->entityManager->getRepository('ODADneprMockServiceBundle:TicketState')->find(TicketState::NEW_TICKET));
         }
-        $ticket->setAddress($this->odaManager->setAddress($ticketObject->getAddress()));
+
+        if ($ticketObject->getAddress()) {
+            $ticket->setAddress($this->odaManager->setAddress($ticketObject->getAddress()));
+        }
 
         $ticket->setUser($this->odaManager->getUser($ticketObject->getUser()));
         $ticket->setCategory($this->odaManager->getCategory($ticketObject->getCategory()));
@@ -268,6 +271,8 @@ class TicketController extends BaseController
         $ticket->setCompletedDate($ticketObject->getCompletedDate());
         $ticket->setTicketId($ticketObject->getTicketId());
         $ticket->setComment($ticketObject->getComment());
+        $ticket->setLongitude($ticketObject->getLongitude());
+        $ticket->setLatitude($ticketObject->getLatitude());
 
         $validator = $this->get('validator');
         $errors = $validator->validate($ticket);

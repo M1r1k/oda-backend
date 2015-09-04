@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
@@ -37,7 +38,6 @@ class Ticket
 
     /**
      * @var Address
-     * @Assert\NotBlank()
      * @ManyToOne(targetEntity="Address")
      * @JoinColumn(name="address_id", referencedColumnName="id")
      */
@@ -132,6 +132,20 @@ class Ticket
      */
     private $comment;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="longitude", type="string", length=255, nullable=true)
+     */
+    private $longitude;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="latitude", type="string", length=255, nullable=true)
+     */
+    private $latitude;
+
     public function __construct() {
         $this->features = new ArrayCollection();
     }
@@ -139,7 +153,7 @@ class Ticket
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -155,7 +169,7 @@ class Ticket
     public function setUser(User $user)
     {
         $this->user = $user;
-    
+
         return $this;
     }
 
@@ -178,7 +192,7 @@ class Ticket
     public function setAddress(Address $address)
     {
         $this->address = $address;
-    
+
         return $this;
     }
 
@@ -201,7 +215,7 @@ class Ticket
     public function setManager(Manager $manager)
     {
         $this->manager = $manager;
-    
+
         return $this;
     }
 
@@ -270,14 +284,14 @@ class Ticket
     public function setTitle($title)
     {
         $this->title = $title;
-    
+
         return $this;
     }
 
     /**
      * Get title
      *
-     * @return string 
+     * @return string
      */
     public function getTitle()
     {
@@ -293,14 +307,14 @@ class Ticket
     public function setBody($body)
     {
         $this->body = $body;
-    
+
         return $this;
     }
 
     /**
      * Get text
      *
-     * @return string 
+     * @return string
      */
     public function getBody()
     {
@@ -316,7 +330,7 @@ class Ticket
     public function setCreatedDate($createdDate)
     {
         $this->created_date = $createdDate;
-    
+
         return $this;
     }
 
@@ -339,7 +353,7 @@ class Ticket
     public function setCompletedDate($completionDate)
     {
         $this->completed_date = $completionDate;
-    
+
         return $this;
     }
 
@@ -362,7 +376,7 @@ class Ticket
     public function setState(TicketState $state)
     {
         $this->state = $state;
-    
+
         return $this;
     }
 
@@ -385,14 +399,14 @@ class Ticket
     public function setTicketId($ticket_id)
     {
         $this->ticket_id = $ticket_id;
-    
+
         return $this;
     }
 
     /**
      * Get ticketnumber
      *
-     * @return string 
+     * @return string
      */
     public function getTicketId()
     {
@@ -408,14 +422,14 @@ class Ticket
     public function setComment($comment)
     {
         $this->comment = $comment;
-    
+
         return $this;
     }
 
     /**
      * Get comment
      *
-     * @return string 
+     * @return string
      */
     public function getComment()
     {
@@ -467,11 +481,76 @@ class Ticket
     }
 
     /**
-     * @param int $updated_date
+     * Set updated_date
+     *
+     * @param integer $updatedDate
      * @return Ticket
      */
-    public function setUpdatedDate($updated_date) {
-        $this->updated_date = $updated_date;
+    public function setUpdatedDate($updatedDate)
+    {
+        $this->updated_date = $updatedDate;
+
         return $this;
+    }
+
+    /**
+     * Set longitude
+     *
+     * @param string $longitude
+     * @return Ticket
+     */
+    public function setLongitude($longitude)
+    {
+        $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    /**
+     * Get longitude
+     *
+     * @return string
+     */
+    public function getLongitude()
+    {
+        return $this->longitude;
+    }
+
+    /**
+     * Set latitude
+     *
+     * @param string $latitude
+     * @return Ticket
+     */
+    public function setLatitude($latitude)
+    {
+        $this->latitude = $latitude;
+
+        return $this;
+    }
+
+    /**
+     * Get latitude
+     *
+     * @return string
+     */
+    public function getLatitude()
+    {
+        return $this->latitude;
+    }
+
+    /**
+     * @Assert\Callback
+     */
+    public function validate(ExecutionContextInterface $context) {
+
+        if (!$this->getAddress()) {
+            if (!$this->latitude || !$this->longitude) {
+                $context->buildViolation('Latitude and Longitude must be setted if address doesnt exist')
+                    ->atPath('latitude')
+                    ->atPath('longitude')
+                    ->addViolation();
+            }
+        }
     }
 }
