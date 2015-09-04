@@ -68,7 +68,7 @@ class Street
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -84,14 +84,14 @@ class Street
     public function setName($name)
     {
         $this->name = $name;
-    
+
         return $this;
     }
 
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -107,14 +107,14 @@ class Street
     public function setCity($city)
     {
         $this->city = $city;
-    
+
         return $this;
     }
 
     /**
      * Get city
      *
-     * @return integer 
+     * @return integer
      */
     public function getCity()
     {
@@ -165,7 +165,7 @@ class Street
      * @return Street
      */
     public function setCityDistrict($cityDistrict) {
-        $this->cityDisrict = $cityDistrict;
+        $this->cityDistrict = $cityDistrict;
         return $this;
     }
 }

@@ -15,12 +15,15 @@ web_profiler:
 swiftmailer:
     disable_delivery: true
 
-liip_functional_test: ~
+liip_functional_test:
+  authentication:
+    username: "ex@ex.com"
+    password: "new-password"
 
-# doctrine:
-#     dbal:
-#         default_connection: default
-#         connections:
-#           default:
-#             driver:   pdo_sqlite
-#             path:     %kernel.cache_dir%/test.db
+doctrine:
+  dbal:
+    default_connection: default
+    connections:
+      default:
+        driver:   pdo_sqlite
+        path:     %kernel.cache_dir%/test.sqlite
