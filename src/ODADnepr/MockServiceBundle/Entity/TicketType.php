@@ -31,7 +31,7 @@ class TicketType
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -48,4 +48,16 @@ class TicketType
         return $this->name;
     }
 
+    /**
+     * Set name
+     *
+     * @param string $name
+     * @return TicketState
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
 }
