@@ -38,7 +38,9 @@ class TicketController extends BaseController
      *   filters={
      *     {"name"="state", "dataType"="string"},
      *     {"name"="title", "dataType"="string"},
-     *     {"name"="category", "dataType"="string"}
+     *     {"name"="category", "dataType"="string"},
+     *     {"name"="order_field", "dataType"="string", "values"="id|completed_date|created_date|start_date|updated_date", "default"="created_date"},
+     *     {"name"="order_type", "dataType"="string", "values"="ASC|DESC", "default"="DESC"}
      *   },
      *   statusCodes={
      *     200="Returned when authorization was successful",
@@ -58,9 +60,22 @@ class TicketController extends BaseController
             'title' => 'title',
             'amount' => 'amount',
             'offset' => 'offset',
+            'order_field' => 'order_field',
+            'order_type' => 'order_type'
         ];
 
         $args = array_intersect_key($request->query->all(), $keys);
+
+        $order = array(
+            'field' => array(
+                'default' => 'created_date',
+                'values' => array('id', 'completed_date', 'created_date', "start_date", "updated_date")
+            ),
+            'type' => array(
+                'default' => 'desc',
+                'values' => array('desc', 'asc')
+            )
+        );
 
         if (!empty($args)) {
             $where = $parameters = [];
@@ -77,16 +92,22 @@ class TicketController extends BaseController
                 $where[] = "t.title LIKE :title";
                 $parameters['title'] = '%' . $args['title'] . '%';
             }
+            if (!empty($args['order_field']) && in_array($args['order_field'], $order['field']['values'])) {
+                $order['field']['default'] = $args['order_field'];
+            }
+            if (!empty($args['order_type']) && in_array($args['order_type'], $order['type']['values'])){
+                $order['type']['default'] = $args['order_type'];
+            }
 
             /** @var Query $query */
             $query = $this->entityManager->createQuery(
                 'SELECT t
                 FROM ODADneprMockServiceBundle:Ticket t' .
-                (empty($where) ? '' : (' WHERE (' . implode(') AND (', $where) . ')'))
+                (empty($where) ? '' : (' WHERE (' . implode(') AND (', $where) . ')')) .
+                (' ORDER BY t.' . $order['field']['default'] . ' ' . $order['type']['default'])
             );
 
             $query->setParameters($parameters);
-
 
             if (!empty($args['amount'])) {
                 $query->setMaxResults($args['amount']);
@@ -99,7 +120,9 @@ class TicketController extends BaseController
             $tickets = $query->getResult();
         }
         else {
-            $tickets = $this->ticketRepository->findAll();
+            $tickets = $this->ticketRepository->findBy(array(), array(
+                $order['field']['default'] => $order['type']['default']
+            ));
         }
         return $this->manualResponseHandler($tickets);
     }
