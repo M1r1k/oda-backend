@@ -46,6 +46,7 @@ class UserControllerTest extends WebTestCase {
 
     $this->assertJsonResponse($response, 200);
     $this->assertTrue(isset(json_decode($response->getContent())->token));
+    $this->assertTrue(isset(json_decode($response->getContent())->user));
   }
 
   public function testCreateUserActionBadParams() {
