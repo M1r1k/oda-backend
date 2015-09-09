@@ -11,13 +11,16 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
+use ODADnepr\MockServiceBundle\Service\GeoInterface;
+// use ODADnepr\MockServiceBundle\Utility\Geo;
+
 /**
  * Ticket
  *
  * @ORM\Table()
  * @ORM\Entity
  */
-class Ticket
+class Ticket implements GeoInterface
 {
     /**
      * @var integer
@@ -543,14 +546,22 @@ class Ticket
      * @Assert\Callback
      */
     public function validate(ExecutionContextInterface $context) {
-
         if (!$this->getAddress()) {
-            if (!$this->latitude || !$this->longitude) {
-                $context->buildViolation('Latitude and Longitude must be setted if address doesnt exist')
+            if (!$this->areCoordinatesSetted()) {
+                return $context->buildViolation('Latitude and Longitude must be setted if address doesnt exist')
                     ->atPath('latitude')
                     ->atPath('longitude')
                     ->addViolation();
             }
+
+            // $geo->getAddress($this);
         }
+        // elseif (!$this->areCoordinatesSetted()) {
+        //     $geo->getCoordinates($this);
+        // }
+    }
+
+    public function areCoordinatesSetted() {
+        return !empty($this->latitude) && !empty($this->longitude);
     }
 }

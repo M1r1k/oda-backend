@@ -246,7 +246,6 @@ class TicketController extends BaseController
         return $this->manualResponseHandler($ticket);
     }
 
-
     /**
      * @Route("/rest/v1/ticket/{ticket_id}/file")
      * @Method({"POST"})
@@ -294,8 +293,11 @@ class TicketController extends BaseController
         $ticket->setCompletedDate($ticketObject->getCompletedDate());
         $ticket->setTicketId($ticketObject->getTicketId());
         $ticket->setComment($ticketObject->getComment());
+
         $ticket->setLongitude($ticketObject->getLongitude());
         $ticket->setLatitude($ticketObject->getLatitude());
+
+        $this->get('geo')->extendGeo($ticket);
 
         $validator = $this->get('validator');
         $errors = $validator->validate($ticket);

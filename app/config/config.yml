@@ -116,3 +116,8 @@ vich_uploader:
         ticket_file:
             uri_prefix:         /files/ticket/
             upload_destination: %kernel.root_dir%/../web/files/ticket/
+
+services:
+    geo:
+        class: ODADnepr\MockServiceBundle\Service\Geo
+        arguments: [@doctrine.orm.default_entity_manager]
