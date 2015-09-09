@@ -15,10 +15,7 @@ web_profiler:
 swiftmailer:
     disable_delivery: true
 
-liip_functional_test:
-  authentication:
-    username: "ex@ex.com"
-    password: "new-password"
+liip_functional_test: ~
 
 doctrine:
   dbal:
