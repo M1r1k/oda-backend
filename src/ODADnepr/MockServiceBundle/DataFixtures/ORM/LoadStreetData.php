@@ -12,7 +12,7 @@ Class LoadStreetData extends AbstractFixture implements OrderedFixtureInterface 
 	public function load(ObjectManager $manager)
 	{
 		$street = new Street();
-		$street->setName('Karla Marksa');
+		$street->setName('Карла Маркса');
 		$street->setCity($this->getReference('city'));
 		$street->setCityDistrict($this->getReference('cityDistrict'));
 

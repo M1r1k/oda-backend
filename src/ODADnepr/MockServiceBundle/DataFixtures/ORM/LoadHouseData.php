@@ -12,7 +12,7 @@ Class LoadHouseData extends AbstractFixture implements OrderedFixtureInterface {
 	public function load(ObjectManager $manager)
 	{
 		$house = new House();
-		$house->setName(5);
+		$house->setName(7);
 		$house->setStreet($this->getReference('street'));
 
 		$manager->persist($house);
