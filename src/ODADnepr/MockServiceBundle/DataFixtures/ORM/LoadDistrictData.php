@@ -12,7 +12,7 @@ Class LoadDistrictData extends AbstractFixture implements OrderedFixtureInterfac
 	public function load(ObjectManager $manager)
 	{
 		$district = new District();
-		$district->setName('Dnipopetrovska');
+		$district->setName('Дніпропетровський');
 
 		$manager->persist($district);
 		$manager->flush();

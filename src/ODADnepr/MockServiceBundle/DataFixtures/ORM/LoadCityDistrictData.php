@@ -12,7 +12,7 @@ Class LoadCityDistrictData extends AbstractFixture implements OrderedFixtureInte
 	public function load(ObjectManager $manager)
 	{
 		$cityDistrict = new CityDistrict();
-		$cityDistrict->setName('Red Stone');
+		$cityDistrict->setName('Жовтневий район');
 		$cityDistrict->setCityId($this->getReference('city')->getId());
 
 		$manager->persist($cityDistrict);

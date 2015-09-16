@@ -24,6 +24,53 @@ Class TicketControllerTest extends WebTestCase {
 
     $response = $client->getResponse();
     $this->assertJsonResponse($response, 200);
+
+    $json = json_decode($response->getContent());
+
+    $this->assertTrue(isset($json->longitude));
+    $this->assertTrue(isset($json->latitude));
+  }
+
+  public function testCreateTicketWithoutAddress() {
+    $data = $this->ticketData();
+
+    unset($data['address']);
+    $data['longitude'] = '35.068338';
+    $data['latitude'] = '48.452295';
+
+    $client = $this->createAuthenticatedClient();
+    $client->request(
+      'POST',
+      '/rest/v1/ticket?_format=json',
+      array(),
+      array(),
+      array('Content-Type' => 'application/json'),
+      json_encode($data)
+    );
+
+    $response = $client->getResponse();
+    $this->assertJsonResponse($response, 200);
+  }
+
+  public function testCreateTicketBadCoordinates() {
+    $data = $this->ticketData();
+
+    unset($data['address']);
+    $data['longitude'] = '35.017387';
+    $data['latitude'] = '48.465154';
+
+    $client = $this->createAuthenticatedClient();
+    $client->request(
+      'POST',
+      '/rest/v1/ticket?_format=json',
+      array(),
+      array(),
+      array('Content-Type' => 'application/json'),
+      json_encode($data)
+    );
+
+    $response = $client->getResponse();
+    $this->assertJsonResponse($response, 400);
   }
 
   public function testCreatTickeNotAuthorized() {

@@ -28,7 +28,8 @@
         "nelmio/api-doc-bundle": "@dev",
         "lexik/jwt-authentication-bundle": "^1.1",
         "symfony/serializer": "^2.7",
-        "vich/uploader-bundle": "^0.14.0"
+        "vich/uploader-bundle": "^0.14.0",
+        "willdurand/geocoder": "^3.1"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",
