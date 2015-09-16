@@ -48,7 +48,7 @@ class TicketController extends BaseController
         $this->manualConstruct();
         /* @var User $user */
         $user = $this->get('security.token_storage')->getToken()->getUser();
-        $tickets = $this->ticketRepository->findBy(array('user_id' => $user->getId()));
+        $tickets = $this->ticketRepository->findBy(array('user' => $user->getId()));
         return $this->manualResponseHandler($tickets);
     }
 
