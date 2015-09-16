@@ -28,9 +28,11 @@ class TicketType extends AbstractType
             ->add('category')
             ->add('type')
             ->add('state')
+            ->add('latitude')
+            ->add('longitude')
         ;
     }
-    
+
     /**
      * @param OptionsResolverInterface $resolver
      */
