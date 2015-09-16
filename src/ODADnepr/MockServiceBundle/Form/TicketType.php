@@ -18,21 +18,22 @@ class TicketType extends AbstractType
             ->add('title')
             ->add('body')
             ->add('created_date')
+            ->add('start_date')
+            ->add('updated_date')
             ->add('completed_date')
             ->add('ticket_id')
-            ->add('image')
             ->add('comment')
+            ->add('longitude')
+            ->add('latitude')
             ->add('user')
             ->add('address')
             ->add('manager')
             ->add('category')
             ->add('type')
             ->add('state')
-            ->add('latitude')
-            ->add('longitude')
         ;
     }
-
+    
     /**
      * @param OptionsResolverInterface $resolver
      */

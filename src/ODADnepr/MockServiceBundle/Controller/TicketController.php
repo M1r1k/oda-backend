@@ -7,6 +7,7 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use ODADnepr\MockServiceBundle\Entity\Ticket;
 use ODADnepr\MockServiceBundle\Entity\TicketFile;
 use ODADnepr\MockServiceBundle\Entity\TicketState;
+use ODADnepr\MockServiceBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -33,6 +34,27 @@ class TicketController extends BaseController
     /**
      * @ApiDoc(
      *   resource=true,
+     *   description="Returns list of  user's tickets",
+     *   output="ODADnepr\MockServiceBundle\Entity\Ticket",
+     *   statusCodes={
+     *     200="Returned when authorization was successful",
+     *   }
+     * )
+     *
+     * @Route("/rest/v1/my-tickets")
+     * @Method({"GET"})
+     */
+    public function myTicketsAction() {
+        $this->manualConstruct();
+        /* @var User $user */
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $tickets = $this->ticketRepository->findBy(array('user_id' => $user->getId()));
+        return $this->manualResponseHandler($tickets);
+    }
+
+    /**
+     * @ApiDoc(
+     *   resource=true,
      *   description="Returns list of tickets",
      *   output="ODADnepr\MockServiceBundle\Entity\Ticket",
      *   filters={
@@ -49,7 +71,6 @@ class TicketController extends BaseController
      *
      * @Route("/rest/v1/tickets")
      * @Method({"GET"})
-     * @Template
      */
     public function indexAction(Request $request)
     {

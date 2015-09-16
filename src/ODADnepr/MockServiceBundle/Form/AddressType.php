@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class StreetType extends AbstractType
+class AddressType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -15,10 +15,11 @@ class StreetType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name')
+            ->add('flat')
+            ->add('district')
             ->add('city')
-            ->add('streetType')
-            ->add('cityDistrict')
+            ->add('street')
+            ->add('house')
         ;
     }
     
@@ -28,7 +29,7 @@ class StreetType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'ODADnepr\MockServiceBundle\Entity\Street'
+            'data_class' => 'ODADnepr\MockServiceBundle\Entity\Address'
         ));
     }
 
@@ -37,6 +38,6 @@ class StreetType extends AbstractType
      */
     public function getName()
     {
-        return 'odadnepr_mockservicebundle_street';
+        return 'odadnepr_mockservicebundle_address';
     }
 }
