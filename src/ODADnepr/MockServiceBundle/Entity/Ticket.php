@@ -47,6 +47,13 @@ class Ticket implements GeoInterface
     private $address;
 
     /**
+     * @var GeoAddress
+     * @ManyToOne(targetEntity="GeoAddress")
+     * @JoinColumn(name="geo_address_id", referencedColumnName="id")
+     */
+    private $geo_address;
+
+    /**
      * @var Manager
      *
      * @ManyToOne(targetEntity="Manager")
@@ -135,20 +142,6 @@ class Ticket implements GeoInterface
      */
     private $comment;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="longitude", type="string", length=255, nullable=true)
-     */
-    private $longitude;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="latitude", type="string", length=255, nullable=true)
-     */
-    private $latitude;
-
     public function __construct() {
         $this->features = new ArrayCollection();
     }
@@ -207,6 +200,29 @@ class Ticket implements GeoInterface
     public function getAddress()
     {
         return $this->address;
+    }
+
+    /**
+     * Set address
+     *
+     * @param GeoAddress $geo_address
+     * @return Ticket
+     */
+    public function setGeoAddress(GeoAddress $geo_address)
+    {
+        $this->geo_address = $geo_address;
+
+        return $this;
+    }
+
+    /**
+     * Get geo address
+     *
+     * @return GeoAddress
+     */
+    public function getGeoAddress()
+    {
+        return $this->geo_address;
     }
 
     /**
@@ -497,71 +513,20 @@ class Ticket implements GeoInterface
     }
 
     /**
-     * Set longitude
-     *
-     * @param string $longitude
-     * @return Ticket
-     */
-    public function setLongitude($longitude)
-    {
-        $this->longitude = $longitude;
-
-        return $this;
-    }
-
-    /**
-     * Get longitude
-     *
-     * @return string
-     */
-    public function getLongitude()
-    {
-        return $this->longitude;
-    }
-
-    /**
-     * Set latitude
-     *
-     * @param string $latitude
-     * @return Ticket
-     */
-    public function setLatitude($latitude)
-    {
-        $this->latitude = $latitude;
-
-        return $this;
-    }
-
-    /**
-     * Get latitude
-     *
-     * @return string
-     */
-    public function getLatitude()
-    {
-        return $this->latitude;
-    }
-
-    /**
      * @Assert\Callback
      */
     public function validate(ExecutionContextInterface $context) {
         if (!$this->getAddress()) {
             if (!$this->areCoordinatesSetted()) {
                 return $context->buildViolation('Latitude and Longitude must be setted if address doesnt exist')
-                    ->atPath('latitude')
-                    ->atPath('longitude')
+                    ->atPath('geo_address')
                     ->addViolation();
             }
 
-            // $geo->getAddress($this);
         }
-        // elseif (!$this->areCoordinatesSetted()) {
-        //     $geo->getCoordinates($this);
-        // }
     }
 
     public function areCoordinatesSetted() {
-        return !empty($this->latitude) && !empty($this->longitude);
+        return !empty($this->geo_address);
     }
 }

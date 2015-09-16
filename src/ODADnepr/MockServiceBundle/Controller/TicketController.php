@@ -315,8 +315,7 @@ class TicketController extends BaseController
         $ticket->setTicketId($ticketObject->getTicketId());
         $ticket->setComment($ticketObject->getComment());
 
-        $ticket->setLongitude($ticketObject->getLongitude());
-        $ticket->setLatitude($ticketObject->getLatitude());
+        $ticket->setGeoAddress($ticketObject->getGeoAddress());
 
         $this->get('geo')->extendGeo($ticket);
 

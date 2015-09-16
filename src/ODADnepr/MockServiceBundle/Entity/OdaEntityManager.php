@@ -53,6 +53,27 @@ class OdaEntityManager
         return $address_entity;
     }
 
+    public function setGeoAddress(GeoAddress $geo_address = null) {
+        if (!$geo_address) {
+            return $geo_address;
+        }
+        $repo = $this->entityManager->getRepository('ODADneprMockServiceBundle:GeoAddress');
+        $id = $geo_address->getId();
+        if (!$id || !($geo_address_entity = $repo->find($geo_address->getId()))) {
+            $long = $geo_address->getLongitude();
+            $lat = $geo_address->getLatitude();
+            $address = $geo_address->getAddress();
+            $geo_address_entity = new GeoAddress();
+            $geo_address_entity->setAddress($address);
+            $geo_address_entity->setLatitude($lat);
+            $geo_address_entity->setLongitude($long);
+            $this->entityManager->persist($geo_address_entity);
+            $this->entityManager->flush();
+        }
+
+        return $geo_address_entity;
+    }
+
     public function setDistrict(District $district_object = null)
     {
         if (!$district_object) {
