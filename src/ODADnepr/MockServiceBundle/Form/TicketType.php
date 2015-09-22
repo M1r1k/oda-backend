@@ -15,6 +15,7 @@ class TicketType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('fb_registered')
             ->add('title')
             ->add('body')
             ->add('created_date')
@@ -23,10 +24,9 @@ class TicketType extends AbstractType
             ->add('completed_date')
             ->add('ticket_id')
             ->add('comment')
-            ->add('longitude')
-            ->add('latitude')
             ->add('user')
             ->add('address')
+            ->add('geo_address')
             ->add('manager')
             ->add('category')
             ->add('type')

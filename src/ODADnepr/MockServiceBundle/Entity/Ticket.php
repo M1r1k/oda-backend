@@ -42,16 +42,22 @@ class Ticket implements GeoInterface
     /**
      * @var Address
      * @ManyToOne(targetEntity="Address")
-     * @JoinColumn(name="address_id", referencedColumnName="id")
+     * @JoinColumn(name="address_id", referencedColumnName="id", nullable=true)
      */
     private $address;
 
     /**
      * @var GeoAddress
      * @ManyToOne(targetEntity="GeoAddress", cascade={"persist"})
-     * @JoinColumn(name="geo_address_id", referencedColumnName="id")
+     * @JoinColumn(name="geo_address_id", referencedColumnName="id", nullable=true)
      */
     private $geo_address;
+
+    /**
+     * @var boolean
+     * @ORM\Column(name="fb_registered", type="integer")
+     */
+    private $fb_registered;
 
     /**
      * @var Manager
@@ -513,8 +519,23 @@ class Ticket implements GeoInterface
     }
 
     /**
-     * @Assert\Callback
+     * @return boolean
      */
+    public function isFbRegistered()
+    {
+        return $this->fb_registered;
+    }
+
+    /**
+     * @param boolean $fb_registered
+     * @return Ticket
+     */
+    public function setFbRegistered($fb_registered)
+    {
+        $this->fb_registered = $fb_registered;
+        return $this;
+    }
+
     public function validate(ExecutionContextInterface $context) {
         if ($this->getGeoAddress() && !$this->getGeoAddress()->getAddress()) {
             if (!$this->areCoordinatesSetted()) {
@@ -522,9 +543,22 @@ class Ticket implements GeoInterface
                     ->atPath('geo_address')
                     ->addViolation();
             }
-
         }
     }
+
+//    /**
+//     * @Assert\Callback
+//     */
+//    public function validate(ExecutionContextInterface $context) {
+//        if (!$this->getAddress()) {
+//            if (!$this->areCoordinatesSetted()) {
+//                return $context->buildViolation('Latitude and Longitude must be setted if address doesnt exist')
+//                    ->atPath('geo_address')
+//                    ->addViolation();
+//            }
+//
+//        }
+//    }
 
     public function areCoordinatesSetted() {
         return $this->getGeoAddress()->getLatitude() && $this->getGeoAddress()->getLongitude();
