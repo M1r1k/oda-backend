@@ -516,7 +516,7 @@ class Ticket implements GeoInterface
      * @Assert\Callback
      */
     public function validate(ExecutionContextInterface $context) {
-        if (!$this->getGeoAddress()->getAddress()) {
+        if ($this->getGeoAddress() && !$this->getGeoAddress()->getAddress()) {
             if (!$this->areCoordinatesSetted()) {
                 return $context->buildViolation('Latitude and Longitude must be setted if address doesnt exist')
                     ->atPath('geo_address')

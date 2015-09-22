@@ -24,6 +24,10 @@ Class Geo {
 	}
 
 	public function extendGeo(GeoInterface &$entity) {
+		if (!$entity->getGeoAddress()) {
+			return;
+		}
+
 		if (!$entity->getGeoAddress()->getAddress()) {
 			if ($entity->getGeoAddress()->getLatitude() && $entity->getGeoAddress()->getLongitude()){
 				$this->getAddress($entity);
