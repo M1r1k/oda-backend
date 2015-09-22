@@ -10,6 +10,7 @@ Class Geo {
 	private $geocoder;
 	private $locale = 'ru';
 	private $em;
+	private $apiKey = 'AIzaSyChLEnB-JbRYCotMnFml2RH-F0_5cScYPE';
 
 	const UndefinedFlat = 'Не вказано';
 
@@ -19,7 +20,7 @@ Class Geo {
 		$this->em = $em;
 
 		$curl = new \Ivory\HttpAdapter\CurlHttpAdapter();
-		$this->geocoder = new \Geocoder\Provider\GoogleMaps($curl, $this->locale);
+		$this->geocoder = new \Geocoder\Provider\GoogleMaps($curl, $this->locale, 'Ukraine', true, $this->apiKey);
 	}
 
 	public function extendGeo(GeoInterface &$entity) {
