@@ -48,7 +48,7 @@ class Ticket implements GeoInterface
 
     /**
      * @var GeoAddress
-     * @ManyToOne(targetEntity="GeoAddress")
+     * @ManyToOne(targetEntity="GeoAddress", cascade={"persist"})
      * @JoinColumn(name="geo_address_id", referencedColumnName="id")
      */
     private $geo_address;
@@ -516,7 +516,7 @@ class Ticket implements GeoInterface
      * @Assert\Callback
      */
     public function validate(ExecutionContextInterface $context) {
-        if (!$this->getAddress()) {
+        if (!$this->getGeoAddress()->getAddress()) {
             if (!$this->areCoordinatesSetted()) {
                 return $context->buildViolation('Latitude and Longitude must be setted if address doesnt exist')
                     ->atPath('geo_address')
@@ -527,6 +527,6 @@ class Ticket implements GeoInterface
     }
 
     public function areCoordinatesSetted() {
-        return !empty($this->geo_address);
+        return $this->getGeoAddress()->getLatitude() && $this->getGeoAddress()->getLongitude();
     }
 }

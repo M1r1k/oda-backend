@@ -5,7 +5,6 @@ namespace ODADnepr\MockServiceBundle\Service;
 use ODADnepr\MockServiceBundle\Service\GeoInterface;
 use Doctrine\ORM\EntityManager;
 use ODADnepr\MockServiceBundle\Entity\Address;
-use ODADnepr\MockServiceBundle\Exception\GeoException;
 
 Class Geo {
 	private $geocoder;
@@ -24,17 +23,27 @@ Class Geo {
 	}
 
 	public function extendGeo(GeoInterface &$entity) {
-		if (!$entity->getAddress()) {
-			if ($entity->getLatitude() && $entity->getLongitude()){
+		if (!$entity->getGeoAddress()->getAddress()) {
+			if ($entity->getGeoAddress()->getLatitude() && $entity->getGeoAddress()->getLongitude()){
 				$this->getAddress($entity);
 			}
-		} elseif (!$entity->getLatitude() || !$entity->getLongitude()) {
+		} elseif (!$entity->getGeoAddress()->getLatitude() || !$entity->getGeoAddress()->getLongitude()) {
 			$this->getCoordinates($entity);
+
+			if (!$entity->getAddress()) {
+				$this->getAddress($entity);
+			}
 		}
 	}
 
 	private function getAddress(GeoInterface &$entity) {
-		$geodata = $this->geocoder->reverse($entity->getLatitude(), $entity->getLongitude())->first();
+		$geodata = $this->geocoder->reverse($entity->getGeoAddress()->getLatitude(), $entity->getGeoAddress()->getLongitude())->first();
+
+		$stringAddress = $geodata->getLocality();
+		$stringAddress .= ', ' . $geodata->getStreetName();
+		$stringAddress .= ' ' . $geodata->getStreetNumber();
+
+		$entity->getGeoAddress()->setAddress($stringAddress);
 
 		$street = $this->prepareStreet($geodata->getStreetName());
 		$params = array(
@@ -49,20 +58,14 @@ Class Geo {
 		if ($house) {
 			$address = $this->processAddress($house);
 			$entity->setAddress($address);
-		} else {
-			throw new GeoException("Cannot detect address with given coordinates");
 		}
 	}
 
 	private function getCoordinates(GeoInterface &$entity) {
-		$addressString = $entity->getAddress()->getCity()->getName();
-		$addressString .= ', ' . $entity->getAddress()->getStreet()->getName();
-		$addressString .= ' ' . $entity->getAddress()->getHouse()->getName();
+		$geo = $this->geocoder->geocode($entity->getGeoAddress()->getAddress());
 
-		$geo = $this->geocoder->geocode($addressString);
-
-		$entity->setLatitude($geo->first()->getLatitude());
-		$entity->setLongitude($geo->first()->getLongitude());
+		$entity->getGeoAddress()->setLatitude($geo->first()->getLatitude());
+		$entity->getGeoAddress()->setLongitude($geo->first()->getLongitude());
 	}
 
 	private function prepareStreet($street) {
