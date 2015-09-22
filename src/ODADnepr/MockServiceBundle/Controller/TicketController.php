@@ -14,8 +14,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
+use ODADnepr\MockServiceBundle\Exception\ValidationException;
 
 class TicketController extends BaseController
 {
@@ -322,7 +323,7 @@ class TicketController extends BaseController
         $validator = $this->get('validator');
         $errors = $validator->validate($ticket);
         if ($errors->count() > 0) {
-            throw new BadRequestHttpException(json_encode($this->serializer->toArray($errors)));
+            throw new ValidationException(json_encode($this->serializer->toArray($errors)));
         }
 
         if ($ticket_id) {
