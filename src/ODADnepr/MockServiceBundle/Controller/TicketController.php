@@ -359,7 +359,6 @@ class TicketController extends BaseController
         $ticket->setCompletedDate($ticketObject->getCompletedDate());
         $ticket->setTicketId($ticketObject->getTicketId());
         $ticket->setComment($ticketObject->getComment());
-        $ticket->setFbRegistered($ticketObject->isFbRegistered());
 
         if ($ticketObject->getGeoAddress()) {
             $ticket->setGeoAddress($ticketObject->getGeoAddress());

@@ -56,12 +56,6 @@ class Ticket implements GeoInterface
     private $geo_address;
 
     /**
-     * @var boolean
-     * @ORM\Column(name="fb_registered", type="integer")
-     */
-    private $fb_registered = 0;
-
-    /**
      * @var Manager
      *
      * @ManyToOne(targetEntity="Manager")
@@ -533,24 +527,6 @@ class Ticket implements GeoInterface
     {
         $this->updated_date = $updatedDate;
 
-        return $this;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function isFbRegistered()
-    {
-        return $this->fb_registered;
-    }
-
-    /**
-     * @param boolean $fb_registered
-     * @return Ticket
-     */
-    public function setFbRegistered($fb_registered)
-    {
-        $this->fb_registered = $fb_registered;
         return $this;
     }
 

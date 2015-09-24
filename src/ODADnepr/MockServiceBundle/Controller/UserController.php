@@ -168,11 +168,11 @@ class UserController extends BaseController
             if (!$user) {
                 throw new NotFoundHttpException('User was not found');
             }
-        }
-        else {
+        } else {
             $user = new User();
             $user->setPassword($userObject->getPassword());
         }
+
         $user->setFirstName($userObject->getFirstName());
         $user->setLastName($userObject->getLastName());
         $user->setMiddleName($userObject->getMiddleName());
@@ -184,6 +184,8 @@ class UserController extends BaseController
         $user->setAddress($this->odaManager->setAddress($userObject->getAddress()));
         $user->setFacilities($this->odaManager->setFacilities($userObject->getFacilities()));
         $user->setSocialCondition($this->odaManager->setSocialCondition($userObject->getSocialCondition()));
+        $user->setFbRegistered($userObject->isFbRegistered());
+
         $validator = $this->get('validator');
         $errors = $validator->validate($user);
         if ($errors->count() > 0) {

@@ -27,9 +27,10 @@ class UserType extends AbstractType
             ->add('facilities')
             ->add('socialCondition')
             ->add('address')
+            ->add('fb_registered', 'integer', array('required' => false))
         ;
     }
-    
+
     /**
      * @param OptionsResolverInterface $resolver
      */

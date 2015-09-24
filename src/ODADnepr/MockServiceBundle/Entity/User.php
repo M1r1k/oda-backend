@@ -128,6 +128,12 @@ class User implements SecurityUserInterface
      */
     protected $password;
 
+    /**
+     * @var boolean
+     * @ORM\Column(name="fb_registered", type="integer")
+     */
+    private $fb_registered = 0;
+
   /**
    * @return string
    */
@@ -166,7 +172,7 @@ class User implements SecurityUserInterface
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -182,14 +188,14 @@ class User implements SecurityUserInterface
     public function setFirstName($firstName)
     {
         $this->first_name = $firstName;
-    
+
         return $this;
     }
 
     /**
      * Get first_name
      *
-     * @return string 
+     * @return string
      */
     public function getFirstName()
     {
@@ -205,14 +211,14 @@ class User implements SecurityUserInterface
     public function setLastName($lastName)
     {
         $this->last_name = $lastName;
-    
+
         return $this;
     }
 
     /**
      * Get last_name
      *
-     * @return string 
+     * @return string
      */
     public function getLastName()
     {
@@ -244,14 +250,14 @@ class User implements SecurityUserInterface
     public function setEmail($email)
     {
         $this->email = $email;
-    
+
         return $this;
     }
 
     /**
      * Get email
      *
-     * @return string 
+     * @return string
      */
     public function getEmail()
     {
@@ -336,14 +342,14 @@ class User implements SecurityUserInterface
     public function setBirthday($birthday)
     {
         $this->birthday = $birthday;
-    
+
         return $this;
     }
 
     /**
      * Get birthday
      *
-     * @return integer 
+     * @return integer
      */
     public function getBirthday()
     {
@@ -359,14 +365,14 @@ class User implements SecurityUserInterface
     public function setImage($image)
     {
         $this->image = $image;
-    
+
         return $this;
     }
 
     /**
      * Get image
      *
-     * @return string 
+     * @return string
      */
     public function getImage()
     {
@@ -382,14 +388,14 @@ class User implements SecurityUserInterface
     public function setPhone($phone)
     {
         $this->phone = $phone;
-    
+
         return $this;
     }
 
     /**
      * Get phone
      *
-     * @return string 
+     * @return string
      */
     public function getPhone()
     {
@@ -405,7 +411,7 @@ class User implements SecurityUserInterface
     public function setAddress(Address $address)
     {
         $this->address = $address;
-    
+
         return $this;
     }
 
@@ -467,5 +473,23 @@ class User implements SecurityUserInterface
    */
   public function eraseCredentials() {
     $this->plainPassword = null;
+  }
+
+  /**
+   * @return boolean
+   */
+  public function isFbRegistered()
+  {
+      return $this->fb_registered;
+  }
+
+  /**
+   * @param boolean $fb_registered
+   * @return Ticket
+   */
+  public function setFbRegistered($fb_registered)
+  {
+      $this->fb_registered = $fb_registered;
+      return $this;
   }
 }
