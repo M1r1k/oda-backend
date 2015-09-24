@@ -59,7 +59,7 @@ class Ticket implements GeoInterface
      * @var boolean
      * @ORM\Column(name="fb_registered", type="integer")
      */
-    private $fb_registered;
+    private $fb_registered = 0;
 
     /**
      * @var Manager
@@ -163,7 +163,7 @@ class Ticket implements GeoInterface
      *
      * @ORM\Column(name="likes_сounter", type="integer", nullable=false)
      */
-    private $likesCounter;
+    private $likesCounter = 0;
 
     public function __construct() {
         $this->features = new ArrayCollection();
