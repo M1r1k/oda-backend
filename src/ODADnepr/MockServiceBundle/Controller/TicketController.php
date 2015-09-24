@@ -7,6 +7,7 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use ODADnepr\MockServiceBundle\Entity\Ticket;
 use ODADnepr\MockServiceBundle\Entity\TicketFile;
 use ODADnepr\MockServiceBundle\Entity\TicketState;
+use ODADnepr\MockServiceBundle\Entity\TicketLike;
 use ODADnepr\MockServiceBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -289,6 +290,49 @@ class TicketController extends BaseController
         return $this->manualResponseHandler($ticket);
     }
 
+    /**
+     * @ApiDoc(
+     *  resource=true,
+     *  description="AUTHORIZATION REQUIRED!!! Like ticket",
+     *  requirements={
+     *     {
+     *       "name"="$ticket_id",
+     *       "dataType"="integer",
+     *       "required"=true,
+     *       "description"="Ticket ID"
+     *     }
+     *   },
+     *  input="ODADnepr\MockServiceBundle\Form\TicketLike",
+     *  output="ODADnepr\MockServiceBundle\Entity\Ticket"
+     * )
+     *
+     * @Route("/rest/v1/ticket/{ticket_id}/like")
+     * @Method({"PUT"})
+     */
+    public function likeAction(Request $request, $ticket_id) {
+        $this->manualConstruct();
+
+        $ticket = $this->ticketRepository->find($ticket_id);
+        $content = json_decode($request->getContent());
+
+        $like = new TicketLike();
+        $like->setTicket($ticket);
+        $like->setFbToken($content->fb_token);
+
+        $validator = $this->get('validator');
+        $errors = $validator->validate($like);
+        if ($errors->count() > 0) {
+            throw new ValidationException(json_encode($this->serializer->toArray($errors)));
+        }
+
+        $ticket->addLike($like);
+
+        $this->entityManager->persist($ticket);
+        $this->entityManager->flush();
+
+        return $this->manualResponseHandler($ticket);
+    }
+
     protected function saveTicketWithRelations(Ticket $ticketObject, $ticket_id = null)
     {
         $this->manualConstruct();
@@ -331,8 +375,7 @@ class TicketController extends BaseController
 
         if ($ticket_id) {
             $this->entityManager->merge($ticket);
-        }
-        else {
+        } else {
             $this->entityManager->persist($ticket);
         }
         $this->entityManager->flush();

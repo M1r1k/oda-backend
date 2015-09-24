@@ -11,14 +11,16 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
+use JMS\Serializer\Annotation\Exclude;
+
 use ODADnepr\MockServiceBundle\Service\GeoInterface;
-// use ODADnepr\MockServiceBundle\Utility\Geo;
 
 /**
  * Ticket
  *
  * @ORM\Table()
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
  */
 class Ticket implements GeoInterface
 {
@@ -148,8 +150,24 @@ class Ticket implements GeoInterface
      */
     private $comment;
 
+    /**
+     * @var integer
+     *
+     * @ORM\OneToMany(targetEntity="TicketLike", mappedBy="ticket", cascade={"persist"})
+     * @Exclude
+     */
+    private $likes;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="likes_сounter", type="integer", nullable=false)
+     */
+    private $likesCounter;
+
     public function __construct() {
         $this->features = new ArrayCollection();
+        $this->likes = new ArrayCollection();
     }
 
     /**
@@ -535,6 +553,42 @@ class Ticket implements GeoInterface
         $this->fb_registered = $fb_registered;
         return $this;
     }
+
+    /**
+     * Add likes
+     *
+     * @param \ODADnepr\MockServiceBundle\Entity\TicketLike $likes
+     * @return Ticket
+     */
+    public function addLike(\ODADnepr\MockServiceBundle\Entity\TicketLike $likes)
+    {
+        $this->likes[] = $likes;
+
+        $this->likesCounter = $this->likes->count();
+
+        return $this;
+    }
+
+    /**
+     * Remove likes
+     *
+     * @param \ODADnepr\MockServiceBundle\Entity\TicketLike $likes
+     */
+    public function removeLike(\ODADnepr\MockServiceBundle\Entity\TicketLike $likes)
+    {
+        $this->likes->removeElement($likes);
+    }
+
+    /**
+     * Get likes
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getLikes()
+    {
+        return $this->likes;
+    }
+
 
     public function validate(ExecutionContextInterface $context) {
         if ($this->getGeoAddress() && !$this->getGeoAddress()->getAddress()) {
