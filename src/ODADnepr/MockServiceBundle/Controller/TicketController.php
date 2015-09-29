@@ -338,13 +338,17 @@ class TicketController extends BaseController
         $this->manualConstruct();
         if ($ticket_id) {
             $ticket = $this->ticketRepository->find($ticket_id);
+
             if (!$ticket) {
                 throw new NotFoundHttpException('Ticket was not found');
             }
+
+            $ticket->setState($ticketObject->getState());
         } else {
             $ticket = new Ticket();
             $ticket->setCreatedDate(time());
-            $ticket->setState($this->entityManager->getRepository('ODADneprMockServiceBundle:TicketState')->find(TicketState::NEW_TICKET));
+
+            $ticket->setState($this->entityManager->getRepository('ODADneprMockServiceBundle:TicketState')->find($ticketObject->getState()->getId()));
         }
 
         if ($ticketObject->getAddress()) {
