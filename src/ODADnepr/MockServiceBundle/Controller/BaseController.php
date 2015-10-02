@@ -10,6 +10,7 @@ namespace ODADnepr\MockServiceBundle\Controller;
 use FOS\RestBundle\Controller\FOSRestController;
 use ODADnepr\MockServiceBundle\Entity\OdaEntityManager;
 use ODADnepr\MockServiceBundle\Entity\Ticket;
+use JMS\Serializer\SerializationContext;
 
 class BaseController extends FOSRestController {
 
@@ -35,8 +36,10 @@ class BaseController extends FOSRestController {
     $this->odaManager = $this->get('oda.oda_entity_manager');
   }
 
-  public function manualResponseHandler($data) {
+  public function manualResponseHandler($data, $viewGroups = array()) {
     $view = $this->view($data);
+    $view->setSerializationContext(SerializationContext::create()->setGroups(array_merge(array('Default'), $viewGroups)));
+
     return $this->handleView($view);
   }
 }

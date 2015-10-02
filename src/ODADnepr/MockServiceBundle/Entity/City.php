@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
 use JMS\Serializer\Annotation\Exclude;
+use JMS\Serializer\Annotation\Groups;
 
 /**
  * City
@@ -34,7 +35,7 @@ class City
     private $name;
 
     /**
-     * @Exclude
+     * @Groups({"with_district"})
      * @ManyToOne(targetEntity="District", inversedBy="cities")
      * @JoinColumn(name="district_id", referencedColumnName="id")
      */
@@ -54,7 +55,7 @@ class City
   /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -70,14 +71,14 @@ class City
     public function setName($name)
     {
         $this->name = $name;
-    
+
         return $this;
     }
 
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -93,14 +94,14 @@ class City
     public function setDistrict($district)
     {
         $this->district = $district;
-    
+
         return $this;
     }
 
     /**
      * Get district
      *
-     * @return integer 
+     * @return integer
      */
     public function getDistrict()
     {
