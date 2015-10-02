@@ -13,6 +13,8 @@ use Symfony\Component\Security\Core\Role\Role;
 use Symfony\Component\Security\Core\User\UserInterface as SecurityUserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
+use ODADnepr\MockServiceBundle\Exception\ValidationException;
+
 /**
  * User
  *
@@ -125,6 +127,7 @@ class User implements SecurityUserInterface
      *
      * @var string
      * @ORM\Column(name="password", type="string", length=255)
+     * @Exclude
      */
     protected $password;
 

@@ -9,6 +9,7 @@ namespace ODADnepr\MockServiceBundle\Controller;
 
 use FOS\RestBundle\Controller\FOSRestController;
 use ODADnepr\MockServiceBundle\Entity\OdaEntityManager;
+use ODADnepr\MockServiceBundle\Entity\Ticket;
 
 class BaseController extends FOSRestController {
 

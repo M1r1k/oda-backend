@@ -126,6 +126,13 @@ class Ticket implements GeoInterface
     private $state;
 
     /**
+     * @var integer
+     * @ORM\Column(name="state_id", type="integer", nullable=false)
+     * @Exclude
+     */
+    private $state_id;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="ticket_id", type="string", length=255, nullable=false)
@@ -565,6 +572,9 @@ class Ticket implements GeoInterface
         return $this->likes;
     }
 
+    public function setStateId($state_id, $states = array()) {
+        $this->state_id = $state_id;
+    }
 
     public function validate(ExecutionContextInterface $context) {
         if ($this->getGeoAddress() && !$this->getGeoAddress()->getAddress()) {
@@ -575,20 +585,6 @@ class Ticket implements GeoInterface
             }
         }
     }
-
-//    /**
-//     * @Assert\Callback
-//     */
-//    public function validate(ExecutionContextInterface $context) {
-//        if (!$this->getAddress()) {
-//            if (!$this->areCoordinatesSetted()) {
-//                return $context->buildViolation('Latitude and Longitude must be setted if address doesnt exist')
-//                    ->atPath('geo_address')
-//                    ->addViolation();
-//            }
-//
-//        }
-//    }
 
     public function areCoordinatesSetted() {
         return $this->getGeoAddress()->getLatitude() && $this->getGeoAddress()->getLongitude();
