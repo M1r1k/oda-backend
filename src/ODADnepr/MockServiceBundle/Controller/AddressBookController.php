@@ -29,7 +29,10 @@ class AddressBookController extends BaseController
       ->getRepository('ODADneprMockServiceBundle:District')
       ->findAll();
 
-    return $this->manualResponseHandler($districts);
+    $cities = $this->entityManager->getRepository('ODADneprMockServiceBundle:City')->findBy(array(), array(), 13, 0);
+
+    $res = array_merge($cities, $districts);
+    return $this->manualResponseHandler($res, array('with_district'));
   }
 
   /**
