@@ -26,14 +26,17 @@ Class AdminAPIController extends BaseController {
   * @Route("/sync/tickets")
   * @Method("GET")
   */
-  public function ansynckedTicketsAction() {
+  public function ansynckedTicketsAction(Request $request) {
     $this->manualConstruct();
+
+    $limit = $request->get('limit') ? intval($request->get('limit')) : null;
+    $offset = $request->get('offset') ? intval($request->get('offset')) : null;
 
     $tickets = $this->ticketRepository->findBy(array(
       'ticket_id' => ''
     ), array(
       'created_date' => 'DESC'
-    ));
+    ), $limit, $offset);
 
     return $this->manualResponseHandler($tickets);
   }
