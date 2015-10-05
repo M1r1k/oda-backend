@@ -42,6 +42,13 @@ class Ticket implements GeoInterface
     private $user;
 
     /**
+     * @var integer
+     * @ORM\Column(name="user_id", type="integer", nullable=false)
+     * @Exclude
+     */
+    private $user_id;
+
+    /**
      * @var Address
      * @ManyToOne(targetEntity="Address")
      * @JoinColumn(name="address_id", referencedColumnName="id", nullable=true)
@@ -202,6 +209,17 @@ class Ticket implements GeoInterface
     public function getUser()
     {
         return $this->user;
+    }
+
+
+    /**
+     * Get user id
+     *
+     * @return UserId
+     */
+    public function getUserId()
+    {
+        return $this->user_id;
     }
 
     /**
