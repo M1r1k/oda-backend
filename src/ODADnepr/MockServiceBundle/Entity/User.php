@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\JoinTable;
 use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\ManyToOne;
-use JMS\Serializer\Annotation\Exclude;
+use JMS\Serializer\Annotation\Groups;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\Role\Role;
 use Symfony\Component\Security\Core\User\UserInterface as SecurityUserInterface;
@@ -127,7 +127,7 @@ class User implements SecurityUserInterface
      *
      * @var string
      * @ORM\Column(name="password", type="string", length=255)
-     * @Exclude
+     * @Groups({"user_editable"})
      */
     protected $password;
 

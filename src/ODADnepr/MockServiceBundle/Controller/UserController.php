@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use ODADnepr\MockServiceBundle\Exception\ValidationException;
+use JMS\Serializer\DeserializationContext;
 
 class UserController extends BaseController
 {
@@ -43,7 +44,13 @@ class UserController extends BaseController
     {
         $this->manualConstruct();
         /* @var User $user_object */
-        $user_object = $this->serializer->deserialize($request->getContent(), 'ODADnepr\MockServiceBundle\Entity\User', 'json');
+        $user_object = $this->serializer->deserialize(
+            $request->getContent(),
+            'ODADnepr\MockServiceBundle\Entity\User',
+            'json',
+            DeserializationContext::create()->setGroups(array('Default', 'user_editable'))
+        );
+
         $user = $this->saveUserWithRelations($user_object);
         $token = $this->get('lexik_jwt_authentication.jwt_manager')->create($user);
         return $this->manualResponseHandler(['user' => $user, 'token' => $token]);
