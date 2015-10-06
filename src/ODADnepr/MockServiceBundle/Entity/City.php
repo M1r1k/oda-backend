@@ -35,6 +35,13 @@ class City
     private $name;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="ru_name", type="string", length=255)
+     */
+    private $ru_name;
+
+    /**
      * @Groups({"with_district"})
      * @ManyToOne(targetEntity="District", inversedBy="cities")
      * @JoinColumn(name="district_id", referencedColumnName="id")
@@ -83,6 +90,26 @@ class City
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Set ru name
+     *
+     * @param string $ru_name
+     * @return District
+     */
+    public function setRuName($ru_name) {
+        $this->ru_name = $ru_name;
+        return $this;
+    }
+
+    /**
+     * Get ru_name
+     *
+     * @return string
+     */
+    public function getRuName() {
+        return $this->ru_name;
     }
 
     /**
