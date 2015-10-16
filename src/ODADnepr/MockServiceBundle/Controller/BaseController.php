@@ -41,9 +41,11 @@ class BaseController extends FOSRestController {
     $this->serializer = $this->get('serializer');
     $this->odaManager = $this->get('oda.oda_entity_manager');
 
-    $user = $this->get('security.token_storage')->getToken()->getUser();
-    if ($user instanceof User) {
-      $this->user = $user;
+    if ($this->get('security.token_storage')->getToken()) {
+      $user = $this->get('security.token_storage')->getToken()->getUser();
+      if ($user instanceof User) {
+        $this->user = $user;
+      }
     }
   }
 
