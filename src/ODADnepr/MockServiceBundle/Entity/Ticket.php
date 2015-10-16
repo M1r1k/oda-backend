@@ -152,6 +152,11 @@ class Ticket implements GeoInterface
     private $files;
 
     /**
+     * @ORM\OneToMany(targetEntity="TicketAnswer", mappedBy="ticket")
+     */
+    private $answers;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="comment", type="text", nullable=true)
@@ -533,6 +538,24 @@ class Ticket implements GeoInterface
      */
     public function getFiles() {
         return $this->files;
+    }
+
+    /**
+     * Add answer
+     *
+     * @param TicketAnswer $answer
+     */
+    public function addAnswer(TicketAnswer $answer) {
+        $this->answers[] = $answer;
+
+        $answers->setTicket($this);
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getAnswer() {
+        return $this->answers;
     }
 
     /**

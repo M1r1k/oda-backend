@@ -118,6 +118,10 @@ vich_uploader:
         ticket_file:
             uri_prefix:         /files/ticket/
             upload_destination: %kernel.root_dir%/../web/files/ticket/
+        ticket_answers:
+            uri_prefix:         /files/answers/
+            upload_destination: %kernel.root_dir%/../web/files/answers/
+            namer: vich_uploader.namer_uniqid
 
 services:
     geo:

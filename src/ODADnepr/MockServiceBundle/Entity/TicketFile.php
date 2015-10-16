@@ -56,7 +56,7 @@ class TicketFile
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -79,7 +79,7 @@ class TicketFile
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -102,7 +102,7 @@ class TicketFile
     /**
      * Get filename
      *
-     * @return string 
+     * @return string
      */
     public function getFilename()
     {
@@ -154,5 +154,4 @@ class TicketFile
     {
         return $this->ticket;
     }
-
 }

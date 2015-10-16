@@ -277,6 +277,7 @@ class TicketController extends BaseController
         $this->manualConstruct();
         /* @var File $file */
         $file = $request->files->get('ticket_image');
+
         $ticket = $this->ticketRepository->find($ticket_id);
         $ticketFile = new TicketFile();
         $ticketFile->setFile($file);

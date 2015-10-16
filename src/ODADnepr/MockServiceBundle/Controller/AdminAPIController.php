@@ -6,6 +6,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
+use ODADnepr\MockServiceBundle\Entity\TicketAnswer;
 
 use ODADnepr\MockServiceBundle\Entity\TicketState;
 use ODADnepr\MockServiceBundle\Service\Push;
@@ -24,9 +27,24 @@ Class AdminAPIController extends BaseController {
   }
 
   /**
-  * @Route("/sync/tickets")
-  * @Method("GET")
-  */
+   * @Route("/sync/tickets/{ticket_id}")
+   * @Method("GET")
+   */
+  public function getTicketAction($ticket_id) {
+    $this->manualConstruct();
+
+    $ticket = $this->ticketRepository->find($ticket_id);
+    if (!$ticket) {
+      throw new NotFoundHttpException('Ticket was not found');
+    }
+
+    return $this->manualResponseHandler($ticket);
+  }
+
+  /**
+   * @Route("/sync/tickets")
+   * @Method("GET")
+   */
   public function ansynckedTicketsAction(Request $request) {
     $this->manualConstruct();
 
@@ -97,6 +115,27 @@ Class AdminAPIController extends BaseController {
     $push->send(Push::STATE_CHANGES);
 
     return new Response();
+  }
+
+  /**
+   * @Route("/sync/tickets/{ticket_id}/answer")
+   * @Method("POST")
+   */
+  public function uploadAnswerFile(Request $request, $ticket_id) {
+    $this->manualConstruct();
+
+    $file = $request->files->get('answer');
+    $ticket = $this->ticketRepository->find($ticket_id);
+
+    $answer = new TicketAnswer();
+    $answer->setFile($file);
+    $answer->setTicket($ticket);
+    $answer->setFilename($file->getFilename());
+
+    $this->entityManager->persist($answer);
+    $this->entityManager->flush();
+
+    return $this->manualResponseHandler(null);
   }
 
   private function save($iterableResult, $func) {
