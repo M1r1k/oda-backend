@@ -105,10 +105,10 @@ Class AdminAPIController extends BaseController {
     $q = $this->entityManager->createQuery('select t from ODADnepr\MockServiceBundle\Entity\Ticket t WHERE t.ticket_id IN ('. $condition .')');
 
     $pushesData = array();
-    $this->save($q->iterate(), function($ticket) use ($states, $data){
+    $this->save($q->iterate(), function($ticket) use ($states, $data, &$pushesData){
       $ticket->setStateId($data[$ticket->getTicketId()]->state_id, $states);
 
-      $pushesData[] = $ticket->getUserId();
+      array_push($pushesData, $ticket->getUserId());
     });
 
     $push = new Push($pushesData);
