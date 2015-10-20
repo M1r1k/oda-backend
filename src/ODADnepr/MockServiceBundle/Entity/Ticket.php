@@ -11,14 +11,16 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
+use JMS\Serializer\Annotation\Exclude;
+
 use ODADnepr\MockServiceBundle\Service\GeoInterface;
-// use ODADnepr\MockServiceBundle\Utility\Geo;
 
 /**
  * Ticket
  *
  * @ORM\Table()
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
  */
 class Ticket implements GeoInterface
 {
@@ -40,6 +42,13 @@ class Ticket implements GeoInterface
     private $user;
 
     /**
+     * @var integer
+     * @ORM\Column(name="user_id", type="integer", nullable=false)
+     * @Exclude
+     */
+    private $user_id;
+
+    /**
      * @var Address
      * @ManyToOne(targetEntity="Address")
      * @JoinColumn(name="address_id", referencedColumnName="id", nullable=true)
@@ -48,16 +57,10 @@ class Ticket implements GeoInterface
 
     /**
      * @var GeoAddress
-     * @ManyToOne(targetEntity="GeoAddress")
+     * @ManyToOne(targetEntity="GeoAddress", cascade={"persist"})
      * @JoinColumn(name="geo_address_id", referencedColumnName="id", nullable=true)
      */
     private $geo_address;
-
-    /**
-     * @var boolean
-     * @ORM\Column(name="fb_registered", type="integer")
-     */
-    private $fb_registered;
 
     /**
      * @var Manager
@@ -130,6 +133,13 @@ class Ticket implements GeoInterface
     private $state;
 
     /**
+     * @var integer
+     * @ORM\Column(name="state_id", type="integer", nullable=false)
+     * @Exclude
+     */
+    private $state_id;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="ticket_id", type="string", length=255, nullable=false)
@@ -142,14 +152,35 @@ class Ticket implements GeoInterface
     private $files;
 
     /**
+     * @ORM\OneToMany(targetEntity="TicketAnswer", mappedBy="ticket")
+     */
+    private $answers;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="comment", type="text", nullable=true)
      */
     private $comment;
 
+    /**
+     * @var integer
+     *
+     * @ORM\OneToMany(targetEntity="TicketLike", mappedBy="ticket", cascade={"persist"})
+     * @Exclude
+     */
+    private $likes;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="likes_сounter", type="integer", nullable=false)
+     */
+    private $likesCounter = 0;
+
     public function __construct() {
         $this->features = new ArrayCollection();
+        $this->likes = new ArrayCollection();
     }
 
     /**
@@ -183,6 +214,17 @@ class Ticket implements GeoInterface
     public function getUser()
     {
         return $this->user;
+    }
+
+
+    /**
+     * Get user id
+     *
+     * @return UserId
+     */
+    public function getUserId()
+    {
+        return $this->user_id;
     }
 
     /**
@@ -499,6 +541,24 @@ class Ticket implements GeoInterface
     }
 
     /**
+     * Add answer
+     *
+     * @param TicketAnswer $answer
+     */
+    public function addAnswer(TicketAnswer $answer) {
+        $this->answers[] = $answer;
+
+        $answers->setTicket($this);
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getAnswer() {
+        return $this->answers;
+    }
+
+    /**
      * @return int
      */
     public function getUpdatedDate() {
@@ -519,39 +579,55 @@ class Ticket implements GeoInterface
     }
 
     /**
-     * @return boolean
-     */
-    public function isFbRegistered()
-    {
-        return $this->fb_registered;
-    }
-
-    /**
-     * @param boolean $fb_registered
+     * Add likes
+     *
+     * @param \ODADnepr\MockServiceBundle\Entity\TicketLike $likes
      * @return Ticket
      */
-    public function setFbRegistered($fb_registered)
+    public function addLike(\ODADnepr\MockServiceBundle\Entity\TicketLike $likes)
     {
-        $this->fb_registered = $fb_registered;
+        $this->likes[] = $likes;
+
+        $this->likesCounter = $this->likes->count();
 
         return $this;
     }
 
-//    /**
-//     * @Assert\Callback
-//     */
-//    public function validate(ExecutionContextInterface $context) {
-//        if (!$this->getAddress()) {
-//            if (!$this->areCoordinatesSetted()) {
-//                return $context->buildViolation('Latitude and Longitude must be setted if address doesnt exist')
-//                    ->atPath('geo_address')
-//                    ->addViolation();
-//            }
-//
-//        }
-//    }
+    /**
+     * Remove likes
+     *
+     * @param \ODADnepr\MockServiceBundle\Entity\TicketLike $likes
+     */
+    public function removeLike(\ODADnepr\MockServiceBundle\Entity\TicketLike $likes)
+    {
+        $this->likes->removeElement($likes);
+    }
+
+    /**
+     * Get likes
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getLikes()
+    {
+        return $this->likes;
+    }
+
+    public function setStateId($state_id, $states = array()) {
+        $this->state_id = $state_id;
+    }
+
+    public function validate(ExecutionContextInterface $context) {
+        if ($this->getGeoAddress() && !$this->getGeoAddress()->getAddress()) {
+            if (!$this->areCoordinatesSetted()) {
+                return $context->buildViolation('Latitude and Longitude must be setted if address doesnt exist')
+                    ->atPath('geo_address')
+                    ->addViolation();
+            }
+        }
+    }
 
     public function areCoordinatesSetted() {
-        return !empty($this->geo_address);
+        return $this->getGeoAddress()->getLatitude() && $this->getGeoAddress()->getLongitude();
     }
 }

@@ -22,14 +22,15 @@
         "incenteev/composer-parameter-handler": "~2.0",
         "sensio/generator-bundle": "2.*",
 
-        "friendsofsymfony/rest-bundle": "@dev",
+        "friendsofsymfony/rest-bundle": "1.7.*",
         "jms/serializer-bundle": "@dev",
         "willdurand/rest-extra-bundle": "@dev",
         "nelmio/api-doc-bundle": "@dev",
         "lexik/jwt-authentication-bundle": "^1.1",
         "symfony/serializer": "^2.7",
         "vich/uploader-bundle": "^0.14.0",
-        "willdurand/geocoder": "^3.1"
+        "willdurand/geocoder": "^3.1",
+        "parse/php-sdk" : "1.1.*"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",

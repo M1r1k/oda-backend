@@ -7,6 +7,7 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use ODADnepr\MockServiceBundle\Entity\Ticket;
 use ODADnepr\MockServiceBundle\Entity\TicketFile;
 use ODADnepr\MockServiceBundle\Entity\TicketState;
+use ODADnepr\MockServiceBundle\Entity\TicketLike;
 use ODADnepr\MockServiceBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -14,8 +15,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
+use ODADnepr\MockServiceBundle\Exception\ValidationException;
 
 class TicketController extends BaseController
 {
@@ -275,6 +277,7 @@ class TicketController extends BaseController
         $this->manualConstruct();
         /* @var File $file */
         $file = $request->files->get('ticket_image');
+
         $ticket = $this->ticketRepository->find($ticket_id);
         $ticketFile = new TicketFile();
         $ticketFile->setFile($file);
@@ -288,18 +291,65 @@ class TicketController extends BaseController
         return $this->manualResponseHandler($ticket);
     }
 
+    /**
+     * @ApiDoc(
+     *  resource=true,
+     *  description="AUTHORIZATION REQUIRED!!! Like ticket",
+     *  requirements={
+     *     {
+     *       "name"="$ticket_id",
+     *       "dataType"="integer",
+     *       "required"=true,
+     *       "description"="Ticket ID"
+     *     }
+     *   },
+     *  input="ODADnepr\MockServiceBundle\Form\TicketLike",
+     *  output="ODADnepr\MockServiceBundle\Entity\Ticket"
+     * )
+     *
+     * @Route("/rest/v1/ticket/{ticket_id}/like")
+     * @Method({"PUT"})
+     */
+    public function likeAction(Request $request, $ticket_id) {
+        $this->manualConstruct();
+
+        $ticket = $this->ticketRepository->find($ticket_id);
+        $content = json_decode($request->getContent());
+
+        $like = new TicketLike();
+        $like->setTicket($ticket);
+        $like->setFbToken($content->fb_token);
+
+        $validator = $this->get('validator');
+        $errors = $validator->validate($like);
+        if ($errors->count() > 0) {
+            throw new ValidationException(json_encode($this->serializer->toArray($errors)));
+        }
+
+        $ticket->addLike($like);
+
+        $this->entityManager->persist($ticket);
+        $this->entityManager->flush();
+
+        return $this->manualResponseHandler($ticket);
+    }
+
     protected function saveTicketWithRelations(Ticket $ticketObject, $ticket_id = null)
     {
         $this->manualConstruct();
         if ($ticket_id) {
             $ticket = $this->ticketRepository->find($ticket_id);
+
             if (!$ticket) {
                 throw new NotFoundHttpException('Ticket was not found');
             }
+
+            $ticket->setState($ticketObject->getState());
         } else {
             $ticket = new Ticket();
             $ticket->setCreatedDate(time());
-            $ticket->setState($this->entityManager->getRepository('ODADneprMockServiceBundle:TicketState')->find(TicketState::NEW_TICKET));
+
+            $ticket->setState($this->entityManager->getRepository('ODADneprMockServiceBundle:TicketState')->find($ticketObject->getState()->getId()));
         }
 
         if ($ticketObject->getAddress()) {
@@ -315,20 +365,21 @@ class TicketController extends BaseController
         $ticket->setTicketId($ticketObject->getTicketId());
         $ticket->setComment($ticketObject->getComment());
 
-        $ticket->setGeoAddress($ticketObject->getGeoAddress());
+        if ($ticketObject->getGeoAddress()) {
+            $ticket->setGeoAddress($ticketObject->getGeoAddress());
+        }
 
         $this->get('geo')->extendGeo($ticket);
 
         $validator = $this->get('validator');
         $errors = $validator->validate($ticket);
         if ($errors->count() > 0) {
-            throw new BadRequestHttpException(json_encode($this->serializer->toArray($errors)));
+            throw new ValidationException(json_encode($this->serializer->toArray($errors)));
         }
 
         if ($ticket_id) {
             $this->entityManager->merge($ticket);
-        }
-        else {
+        } else {
             $this->entityManager->persist($ticket);
         }
         $this->entityManager->flush();

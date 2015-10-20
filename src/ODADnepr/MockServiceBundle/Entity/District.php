@@ -34,6 +34,13 @@ class District
     /**
      * @var string
      *
+     * @ORM\Column(name="ru_name", type="string", length=255)
+     */
+    private $ru_name;
+
+    /**
+     * @var string
+     *
      * @Exclude
      * @OneToMany(targetEntity="City", mappedBy="district")
      */
@@ -46,7 +53,7 @@ class District
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -62,17 +69,37 @@ class District
     public function setName($name)
     {
         $this->name = $name;
-    
+
         return $this;
     }
 
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Set ru name
+     *
+     * @param string $ru_name
+     * @return District
+     */
+    public function setRuName($ru_name) {
+        $this->ru_name = $ru_name;
+        return $this;
+    }
+
+    /**
+     * Get ru_name
+     *
+     * @return string
+     */
+    public function getRuName() {
+        return $this->ru_name;
     }
 }

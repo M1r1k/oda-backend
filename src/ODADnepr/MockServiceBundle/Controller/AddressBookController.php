@@ -29,7 +29,10 @@ class AddressBookController extends BaseController
       ->getRepository('ODADneprMockServiceBundle:District')
       ->findAll();
 
-    return $this->manualResponseHandler($districts);
+    $cities = $this->entityManager->getRepository('ODADneprMockServiceBundle:City')->findBy(array(), array(), 13, 0);
+
+    $res = array_merge($cities, $districts);
+    return $this->manualResponseHandler($res, array('with_district'));
   }
 
   /**
@@ -68,9 +71,22 @@ class AddressBookController extends BaseController
    */
   public function getStreetsAction($city_id) {
     $this->manualConstruct();
-    $streets = $this->entityManager
-      ->getRepository('ODADneprMockServiceBundle:Street')
-      ->findBy(['city' => $city_id]);
+
+    $qb = $this->entityManager->createQueryBuilder();
+    $qb
+        ->select(array('s'))
+        ->from('ODADneprMockServiceBundle:Street', 's')
+        ->innerJoin('s.streetType', 't', 'WITH', 's.streetType = t.id')
+        ->leftJoin('s.cityDistrict', 'd', 'WITH', 's.cityDistrict = d.id')
+        ->where('s.city = :city')
+        ->groupBy('s.name, s.city');
+
+    $query = $qb->getQuery();
+    $query->setParameters(array(
+      'city' => $city_id
+    ));
+
+    $streets = $result = $query->getResult();
     return $this->manualResponseHandler($streets);
   }
 
@@ -90,9 +106,22 @@ class AddressBookController extends BaseController
   public function getHousesAction($street_id)
   {
     $this->manualConstruct();
-    $houses = $this->entityManager
-      ->getRepository('ODADneprMockServiceBundle:House')
-      ->findBy(['street' => $street_id]);
+
+    $street = $this->entityManager->getRepository('ODADneprMockServiceBundle:Street')->find($street_id);
+    $streets = $this->entityManager->getRepository('ODADneprMockServiceBundle:Street')->findBy(array(
+      'city' => $street->getCity(),
+      'name' => $street->getName()
+    ));
+
+    $streetsIds = array();
+    foreach ($streets as $s) {
+      $streetsIds[] = $s->getId();
+    }
+
+    $houses = $this->entityManager->getRepository('ODADneprMockServiceBundle:House')->findBy(array(
+      'street' => $streetsIds
+    ));
+
     return $this->manualResponseHandler($houses);
   }
 }

@@ -7,8 +7,9 @@ use ODADnepr\MockServiceBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use ODADnepr\MockServiceBundle\Exception\ValidationException;
+use JMS\Serializer\DeserializationContext;
 
 class UserController extends BaseController
 {
@@ -43,7 +44,13 @@ class UserController extends BaseController
     {
         $this->manualConstruct();
         /* @var User $user_object */
-        $user_object = $this->serializer->deserialize($request->getContent(), 'ODADnepr\MockServiceBundle\Entity\User', 'json');
+        $user_object = $this->serializer->deserialize(
+            $request->getContent(),
+            'ODADnepr\MockServiceBundle\Entity\User',
+            'json',
+            DeserializationContext::create()->setGroups(array('Default', 'user_editable'))
+        );
+
         $user = $this->saveUserWithRelations($user_object);
         $token = $this->get('lexik_jwt_authentication.jwt_manager')->create($user);
         return $this->manualResponseHandler(['user' => $user, 'token' => $token]);
@@ -168,11 +175,11 @@ class UserController extends BaseController
             if (!$user) {
                 throw new NotFoundHttpException('User was not found');
             }
-        }
-        else {
+        } else {
             $user = new User();
             $user->setPassword($userObject->getPassword());
         }
+
         $user->setFirstName($userObject->getFirstName());
         $user->setLastName($userObject->getLastName());
         $user->setMiddleName($userObject->getMiddleName());
@@ -184,10 +191,12 @@ class UserController extends BaseController
         $user->setAddress($this->odaManager->setAddress($userObject->getAddress()));
         $user->setFacilities($this->odaManager->setFacilities($userObject->getFacilities()));
         $user->setSocialCondition($this->odaManager->setSocialCondition($userObject->getSocialCondition()));
+        $user->setFbRegistered($userObject->isFbRegistered());
+
         $validator = $this->get('validator');
         $errors = $validator->validate($user);
         if ($errors->count() > 0) {
-            throw new BadRequestHttpException(json_encode($this->serializer->toArray($errors)));
+            throw new ValidationException(json_encode($this->serializer->toArray($errors)));
         }
         if ($user_id) {
             $this->entityManager->merge($user);
